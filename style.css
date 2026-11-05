@@ -116,10 +116,10 @@
     user-select: none;
   }
 
-  .deco-13 { width: 94px; left: 12%;  top: 56%; opacity: 0.46; }
-  .deco-14 { width: 64px; left: 36%;  top: 16%; opacity: 0.42; }
-  .deco-15 { width: 58px; right: 22%; top: 60%; opacity: 0.40; }
-  .deco-16 { width: 50px; left: 20%;  top: 26%; opacity: 0.38; }
+  .deco-13 { width: 113px; left: 12%;  top: 56%; opacity: 0.46; }
+  .deco-14 { width: 77px; left: 36%;  top: 16%; opacity: 0.42; }
+  .deco-15 { width: 70px; right: 22%; top: 60%; opacity: 0.40; }
+  .deco-16 { width: 60px; left: 20%;  top: 26%; opacity: 0.38; }
 
   .band-deco img {
     position: absolute;
@@ -129,19 +129,19 @@
     user-select: none;
   }
 
-  .deco-1  { width: 86px; left:  2%;  top: 16%;  opacity: 0.58; }
-  .deco-2  { width: 54px; left:  9%;  top: 42%;  opacity: 0.40; }
-  .deco-3  { width: 68px; left:  3%;  top: 66%;  opacity: 0.52; }
-  .deco-4  { width: 48px; left: 12%;  top: 80%;  opacity: 0.34; }
-  .deco-5  { width: 72px; left:  6%;  top: 26%;  opacity: 0.46; }
-  .deco-6  { width: 40px; left: 14%;  top: 58%;  opacity: 0.32; }
+  .deco-1  { width: 103px; left:  2%;  top: 16%;  opacity: 0.58; }
+  .deco-2  { width: 65px; left:  9%;  top: 42%;  opacity: 0.40; }
+  .deco-3  { width: 82px; left:  3%;  top: 66%;  opacity: 0.52; }
+  .deco-4  { width: 58px; left: 12%;  top: 80%;  opacity: 0.34; }
+  .deco-5  { width: 86px; left:  6%;  top: 26%;  opacity: 0.46; }
+  .deco-6  { width: 48px; left: 14%;  top: 58%;  opacity: 0.32; }
 
-  .deco-7  { width: 90px; right: 4%;  top: 14%;  opacity: 0.58; }
-  .deco-8  { width: 74px; right: 14%; top: 46%;  opacity: 0.46; }
-  .deco-9  { width: 60px; right: 5%;  top: 72%;  opacity: 0.52; }
-  .deco-10 { width: 52px; right: 22%; top: 22%;  opacity: 0.36; }
-  .deco-11 { width: 44px; right: 27%; top: 62%;  opacity: 0.30; }
-  .deco-12 { width: 42px; right: 17%; top: 80%;  opacity: 0.34; }
+  .deco-7  { width: 108px; right: 4%;  top: 14%;  opacity: 0.58; }
+  .deco-8  { width: 89px; right: 14%; top: 46%;  opacity: 0.46; }
+  .deco-9  { width: 72px; right: 5%;  top: 72%;  opacity: 0.52; }
+  .deco-10 { width: 62px; right: 22%; top: 22%;  opacity: 0.36; }
+  .deco-11 { width: 53px; right: 27%; top: 62%;  opacity: 0.30; }
+  .deco-12 { width: 50px; right: 17%; top: 80%;  opacity: 0.34; }
 
   /* peel the inner objects away as the window narrows so nothing lands on the text */
   @media (max-width: 1240px) {
@@ -153,8 +153,8 @@
 
   @media (max-width: 1040px) {
     .deco-2, .deco-4, .deco-12 { display: none; }
-    .deco-1 { width: 58px; left: 2%; }
-    .deco-8 { width: 50px; right: 4%; top: 56%; }
+    .deco-1 { width: 70px; left: 2%; }
+    .deco-8 { width: 60px; right: 4%; top: 56%; }
   }
 
   .band-inner { display: flex; align-items: center; gap: 40px; position: relative; z-index: 4; }
@@ -419,10 +419,10 @@
        these selectors need img in them to outrank the hide rule above */
     .band-deco img { display: none; }
     .band-front { display: none; }
-    .band-deco img.deco-7 { display: block; width: 54px; right:  4%; top:  6%; opacity: 0.5; }
-    .band-deco img.deco-9 { display: block; width: 38px; right: 26%; top:  3%; opacity: 0.38; }
-    .band-deco img.deco-1 { display: block; width: 46px; left: auto; right:  9%; top: 26%; opacity: 0.44; }
-    .band-deco img.deco-5 { display: block; width: 36px; left: auto; right: 28%; top: 32%; opacity: 0.32; }
+    .band-deco img.deco-7 { display: block; width: 65px; right:  4%; top:  6%; opacity: 0.5; }
+    .band-deco img.deco-9 { display: block; width: 46px; right: 26%; top:  3%; opacity: 0.38; }
+    .band-deco img.deco-1 { display: block; width: 55px; left: auto; right:  9%; top: 26%; opacity: 0.44; }
+    .band-deco img.deco-5 { display: block; width: 43px; left: auto; right: 28%; top: 32%; opacity: 0.32; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -538,7 +538,7 @@
   .opening .email:hover, .opening .email:focus-visible { text-decoration: underline; }
 
   .grey-square {
-    position: absolute; z-index: 4; right: 2vw; top: max(30vh, 230px);
+    position: absolute; z-index: 4; right: 0.5vw; top: max(30vh, 230px);
     width: 30vw; height: 40vh; border-radius: 24px;
     background: #b9c0cb; box-shadow: 0 24px 40px -24px rgba(16, 41, 79, 0.45);
     will-change: transform;
@@ -553,5 +553,5 @@
   @media (max-width: 720px) {
     .opening h1 { font-size: 2.6rem; }
     .map { left: 6vw; top: 32vh; width: 88vw; max-height: 36vh; }
-    .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 3vw; }
+    .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 1vw; }
   }

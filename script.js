@@ -121,8 +121,8 @@
     m.ew = em.offsetWidth;  m.eh = em.offsetHeight;
   }
 
-  function put(el, xs, ys, xe, ye, e, s) {
-    var x = xs + (xe - xs) * e, y = ys + (ye - ys) * e;
+  function put(el, xs, ys, xe, ye, px, py, ps, s0, s1) {
+    var x = xs + (xe - xs) * px, y = ys + (ye - ys) * py, s = s0 + (s1 - s0) * ps;
     el.style.transform = "translate3d(" + x + "px," + y + "px,0) scale(" + s + ")";
   }
 
@@ -141,21 +141,27 @@
     /* row layout: picture left, name and description right */
     var tw = Math.max(m.nw, m.rw);
     var rowU = m.pw + 22 + tw;
-    var s1 = Math.min(0.64, (vw * 0.92) / rowU);
+    var s1 = Math.min(0.74, (vw * 0.92) / rowU);
     var left = -s1 * rowU / 2, top1 = 64;
     var tx = left + s1 * (m.pw + 22);
     var textH = m.nh + 6 + m.rh;
     var ty = top1 + s1 * (m.ph - textH) / 2;
 
-    var e = ease(clamp(y * SPEED / (vh * 0.9)));
-    var s = s0 + (s1 - s0) * e;
+    var p = clamp(y * SPEED / (vh * 0.9));
+    var e = ease(p);
 
-    put(pic, -s0 * m.pw / 2, gTop, left, top1, e, s);
-    put(nm,  -s0 * m.nw / 2, gTop + s0 * nY, tx, ty, e, s);
-    put(rl,  -s0 * m.rw / 2, gTop + s0 * rY, tx, ty + s1 * (m.nh + 6), e, s);
-    put(em,  -s0 * m.ew / 2, gTop + s0 * eY, tx, ty + s1 * (m.nh + 6 + m.rh + 6), e, s);
+    /* the picture leads; the text waits, slides right clear of it, then rises */
+    var pp = ease(clamp(p / 0.75));
+    var tx_ = ease(clamp((p - 0.2) / 0.6));
+    var ty_ = ease(clamp((p - 0.35) / 0.65));
+    var ts = ease(clamp((p - 0.15) / 0.85));
 
-    var fade = 1 - clamp(e / 0.45);
+    put(pic, -s0 * m.pw / 2, gTop, left, top1, pp, pp, pp, s0, s1);
+    put(nm,  -s0 * m.nw / 2, gTop + s0 * nY, tx, ty, tx_, ty_, ts, s0, s1);
+    put(rl,  -s0 * m.rw / 2, gTop + s0 * rY, tx, ty + s1 * (m.nh + 6), tx_, ty_, ts, s0, s1);
+    put(em,  -s0 * m.ew / 2, gTop + s0 * eY, tx, ty + s1 * (m.nh + 6 + m.rh + 6), tx_, ty_, ts, s0, s1);
+
+    var fade = 1 - clamp(p / 0.3);
     em.style.opacity = fade;
     em.style.visibility = fade <= 0 ? "hidden" : "visible";
 
@@ -165,14 +171,14 @@
     var e2 = ease(t2);
     map.style.opacity = clamp(t2 * 4);
     map.style.transform = "translate3d(0," + ((1 - e2) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * e2) + ")";
-    sq.style.transform = "translate3d(" + ((1 - e2) * vw * 0.45) + "px,0,0)";
+    sq.style.transform = "translate3d(" + ((1 - e) * vw * 0.45) + "px,0,0)";
   }
 
   var cur = window.scrollY, target = cur, running = false;
 
   function tick() {
     var d = target - cur;
-    if (calm || Math.abs(d) < 0.1) { cur = target; } else { cur += d * 0.14; }
+    if (calm || animating || Math.abs(d) < 0.1) { cur = target; } else { cur += d * 0.14; }
     render(cur);
     if (cur !== target) { window.requestAnimationFrame(tick); } else { running = false; }
   }
@@ -181,6 +187,48 @@
     target = window.scrollY;
     if (!running) { running = true; window.requestAnimationFrame(tick); }
   }, { passive: true });
+
+  /* never rest mid-transition: the first nudge plays the whole stage right away */
+  var lastY = window.scrollY, animating = false, DURATION = 1100;
+
+  function glide(from, to) {
+    animating = true;
+    var t0 = null;
+    function step(now) {
+      if (t0 === null) { t0 = now; }
+      var t = calm ? 1 : Math.min(1, (now - t0) / DURATION);
+      var v = from + (to - from) * ease(t);
+      window.scrollTo({ top: v, behavior: "instant" });
+      target = v; cur = v; render(v);
+      if (t < 1) { window.requestAnimationFrame(step); }
+      else { animating = false; lastY = window.scrollY; }
+    }
+    window.requestAnimationFrame(step);
+  }
+
+  function onScroll() {
+    var y = window.scrollY;
+    if (animating) { return; }
+    var dir = y > lastY ? 1 : -1;
+    lastY = y;
+    var vh = window.innerHeight;
+    var pts = [0, vh * 0.9 / SPEED, vh * 1.8 / SPEED];
+    if (y >= pts[2] - 1) { return; }
+    var lo = 0;
+    for (var i = 0; i < pts.length - 1; i++) { if (y >= pts[i]) { lo = i; } }
+    if (y - pts[lo] < 2) {
+      if (dir > 0 || lo === 0) { glide(y, pts[lo + 1]); }
+      else { glide(y, pts[lo - 1]); }
+      return;
+    }
+    glide(y, dir > 0 ? pts[lo + 1] : pts[lo]);
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  function block(ev) { if (animating) { ev.preventDefault(); } }
+  window.addEventListener("wheel", block, { passive: false });
+  window.addEventListener("touchmove", block, { passive: false });
 
   function refresh() { measure(); cur = target = window.scrollY; render(cur); }
   window.addEventListener("resize", refresh);
