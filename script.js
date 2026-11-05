@@ -84,3 +84,67 @@
 
   frame();
 })();
+
+/* home opening: shrink, fade the blue, then bring in the map and the grey square */
+(function () {
+  var pin = document.querySelector(".showcase .pin");
+  if (!pin) { return; }
+  var root = document.documentElement;
+  var core = pin.querySelector(".opening");
+  var map = pin.querySelector(".map");
+  var sq = pin.querySelector(".grey-square");
+  var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var cols = {
+    "--bg": ["#10294f", "#eef1f5"], "--c-name": ["#ffffff", "#10294f"],
+    "--c-role": ["#b3c5dd", "#4d5c72"], "--c-link": ["#a9bcd6", "#4d5c72"],
+    "--c-hover": ["#ffffff", "#10294f"], "--c-rule": ["#3b5277", "#dde3ec"]
+  };
+
+  function clamp(t) { return Math.max(0, Math.min(1, t)); }
+  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function rgb(h) { return [1, 3, 5].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
+  function mix(a, b, t) {
+    var x = rgb(a), y = rgb(b);
+    return "rgb(" + x.map(function (v, i) { return Math.round(v + (y[i] - v) * t); }).join(",") + ")";
+  }
+
+  function render(y) {
+    var vh = window.innerHeight, vw = window.innerWidth;
+    var w = core.offsetWidth, h = core.offsetHeight;
+    var s0 = Math.min(1.5, (vh * 0.78) / h, (vw * 0.94) / w);
+    var s1 = Math.min(vw < 720 ? 0.6 : 0.52, s0);
+
+    var e = ease(clamp(y / (vh * 0.9)));
+    var s = s0 + (s1 - s0) * e;
+    var cy = vh / 2 + ((64 + h * s1 / 2) - vh / 2) * e;
+    core.style.transform = "translate3d(-50%," + (cy - h / 2) + "px,0) scale(" + s + ")";
+
+    for (var k in cols) { root.style.setProperty(k, mix(cols[k][0], cols[k][1], e)); }
+
+    var t2 = clamp((y - vh * 0.55) / (vh * 1.25));
+    var e2 = ease(t2);
+    map.style.opacity = clamp(t2 * 4);
+    map.style.transform = "translate3d(0," + ((1 - e2) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * e2) + ")";
+    sq.style.transform = "translate3d(" + ((1 - e2) * vw * 0.45) + "px,0,0)";
+  }
+
+  var cur = window.scrollY, target = cur, running = false;
+
+  function tick() {
+    var d = target - cur;
+    if (calm || Math.abs(d) < 0.1) { cur = target; } else { cur += d * 0.14; }
+    render(cur);
+    if (cur !== target) { window.requestAnimationFrame(tick); } else { running = false; }
+  }
+
+  window.addEventListener("scroll", function () {
+    target = window.scrollY;
+    if (!running) { running = true; window.requestAnimationFrame(tick); }
+  }, { passive: true });
+
+  function refresh() { cur = target = window.scrollY; render(cur); }
+  window.addEventListener("resize", refresh);
+  window.addEventListener("load", refresh);
+  refresh();
+})();
