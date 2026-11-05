@@ -511,40 +511,41 @@
   .home nav a + a { border-left-color: var(--c-rule, rgba(255,255,255,0.2)); }
   .home .panel-about { padding-top: 34px; }
 
-  .showcase { position: relative; height: 290vh; }
+  .showcase { position: relative; height: 275vh; }
 
   .pin { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--bg, #10294f); }
 
-  .opening {
-    position: absolute; left: 50%; top: 0; z-index: 2;
-    width: 460px; max-width: 92vw;
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-    transform: translate3d(-50%, 0, 0);
-    will-change: transform;
+  /* the opening is an anchor at top center; each piece is placed by script.js */
+  .opening { position: absolute; left: 50%; top: 0; width: 0; height: 0; z-index: 2; }
+
+  .opening > * {
+    position: absolute; left: 0; top: 0;
+    width: max-content; margin: 0; white-space: nowrap;
+    transform-origin: 0 0; will-change: transform;
   }
 
-  .opening .portrait-holder { background: var(--bg, #10294f); transform: none; margin-bottom: 22px; }
+  .opening > .portrait-holder { background: var(--bg, #10294f); transform: none; }
 
   .opening h1 {
     font-family: "Source Serif 4", Georgia, serif; font-weight: 600;
     font-size: 3.25rem; letter-spacing: -0.02em; line-height: 1.1;
-    color: var(--c-name, #fff); margin: 0 0 10px;
+    color: var(--c-name, #fff);
   }
 
-  .opening .role { font-size: 1.1rem; color: var(--c-role, #b3c5dd); border: 0; padding: 0; margin: 0 0 8px; }
+  .opening .role { font-size: 1.1rem; color: var(--c-role, #b3c5dd); border: 0; padding: 0; }
 
-  .opening .email { font-size: 1rem; font-weight: 500; color: var(--gold); text-decoration: none; }
+  .opening .email { display: block; font-size: 1rem; font-weight: 500; color: var(--gold); text-decoration: none; }
   .opening .email:hover, .opening .email:focus-visible { text-decoration: underline; }
 
   .grey-square {
-    position: absolute; z-index: 4; right: 5vw; top: 30vh;
+    position: absolute; z-index: 4; right: 2vw; top: max(30vh, 230px);
     width: 30vw; height: 40vh; border-radius: 24px;
     background: #b9c0cb; box-shadow: 0 24px 40px -24px rgba(16, 41, 79, 0.45);
     will-change: transform;
   }
 
   .map {
-    position: absolute; z-index: 5; left: 7vw; top: 30vh;
+    position: absolute; z-index: 5; left: 7vw; top: max(30vh, 230px);
     width: min(46vw, 640px); height: auto; max-height: 60vh; object-fit: contain;
     border-radius: 18px; opacity: 0; will-change: transform, opacity;
   }
@@ -552,5 +553,5 @@
   @media (max-width: 720px) {
     .opening h1 { font-size: 2.6rem; }
     .map { left: 6vw; top: 32vh; width: 88vw; max-height: 36vh; }
-    .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 5vw; }
+    .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 3vw; }
   }
