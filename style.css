@@ -511,7 +511,7 @@
   .home nav a + a { border-left-color: var(--c-rule, rgba(255,255,255,0.2)); }
   .home .panel-about { padding-top: 34px; }
 
-  .showcase { position: relative; height: 275vh; }
+  .showcase { position: relative; height: 193vh; }
 
   .pin { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--bg, #10294f); }
 

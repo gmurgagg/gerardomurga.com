@@ -167,10 +167,9 @@
 
     for (var k in cols) { root.style.setProperty(k, mix(cols[k][0], cols[k][1], e)); }
 
-    var t2 = clamp((y * SPEED - vh * 0.55) / (vh * 1.25));
-    var e2 = ease(t2);
-    map.style.opacity = clamp(t2 * 4);
-    map.style.transform = "translate3d(0," + ((1 - e2) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * e2) + ")";
+    /* the map rises from the bottom on the same step as the grey square */
+    map.style.opacity = clamp(p * 4);
+    map.style.transform = "translate3d(0," + ((1 - e) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * e) + ")";
     sq.style.transform = "translate3d(" + ((1 - e) * vw * 0.45) + "px,0,0)";
   }
 
@@ -212,8 +211,8 @@
     var dir = y > lastY ? 1 : -1;
     lastY = y;
     var vh = window.innerHeight;
-    var pts = [0, vh * 0.9 / SPEED, vh * 1.8 / SPEED];
-    if (y >= pts[2] - 1) { return; }
+    var pts = [0, vh * 0.9 / SPEED];
+    if (y >= pts[pts.length - 1] - 1) { return; }
     var lo = 0;
     for (var i = 0; i < pts.length - 1; i++) { if (y >= pts[i]) { lo = i; } }
     if (y - pts[lo] < 2) {
