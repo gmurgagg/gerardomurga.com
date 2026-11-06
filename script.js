@@ -128,6 +128,21 @@
 
   var SPEED = 1.1;
 
+  /* the globe faces Mexico and the US while it rises, and only starts spinning once it has arrived;
+     out of sight it is turned back to that view, so it never jumps while on screen */
+  var HOME = "50deg 74deg auto", globeState = "";
+  function settleGlobe(e) {
+    if (!map.jumpCameraToGoal) { return; }          /* model-viewer has not loaded yet */
+    var state = e >= 0.999 ? "spin" : (e <= 0.001 ? "home" : "hold");
+    if (state === globeState) { return; }
+    globeState = state;
+    map.autoRotate = state === "spin" && !calm;
+    if (state === "home") { map.cameraOrbit = HOME; map.jumpCameraToGoal(); }
+  }
+  if (window.customElements) {
+    customElements.whenDefined("model-viewer").then(function () { globeState = ""; settleGlobe(ease(clamp(window.scrollY * SPEED / (window.innerHeight * 0.9)))); });
+  }
+
   function render(y) {
     var vh = window.innerHeight, vw = window.innerWidth;
 
@@ -171,6 +186,7 @@
     map.style.opacity = clamp(p * 4);
     map.style.transform = "translate3d(0," + ((1 - e) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * e) + ")";
     sq.style.transform = "translate3d(" + ((1 - e) * vw * 0.45) + "px,0,0)";
+    settleGlobe(e);
   }
 
   var cur = window.scrollY, target = cur, running = false;
@@ -241,7 +257,7 @@
   var globe = document.querySelector("model-viewer.map");
   if (!globe || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
 
-  var COAST = 0.45;        /* seconds for the spin to lose most of its speed; higher glides longer */
+  var COAST = 0.36;       /* seconds for the spin to lose most of its speed; higher glides longer */
   var MAX_SPEED = 6;       /* radians per second, so a hard flick does not whip it around */
   var samples = [], dragging = false, coasting = 0;
 
