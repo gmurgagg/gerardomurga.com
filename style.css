@@ -546,12 +546,13 @@
 
   .map {
     position: absolute; z-index: 5; left: 7vw; top: max(30vh, 230px);
-    width: min(46vw, 640px); height: auto; max-height: 60vh; object-fit: contain;
-    border-radius: 18px; opacity: 0; will-change: transform, opacity;
+    display: block; width: min(46vw, 62vh, 640px); aspect-ratio: 1; height: auto;
+    background: transparent; --poster-color: transparent;
+    opacity: 0; will-change: transform, opacity;
   }
 
   @media (max-width: 720px) {
     .opening h1 { font-size: 2.6rem; }
-    .map { left: 6vw; top: 32vh; width: 88vw; max-height: 36vh; }
+    .map { left: 6vw; top: 30vh; width: min(80vw, 38vh); }
     .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 1vw; }
   }
