@@ -547,7 +547,7 @@
   .map {
     position: absolute; z-index: 5; left: 7vw; top: max(30vh, 230px);
     display: block; width: min(46vw, 62vh, 640px); aspect-ratio: 1; height: auto;
-    background: transparent; --poster-color: transparent;
+    background: transparent; --poster-color: transparent; outline: none;
     opacity: 0; will-change: transform, opacity;
   }
 

@@ -59,8 +59,11 @@
 
   <div class="grey-square" aria-hidden="true"></div>
     <model-viewer class="map" src="assets/earth.glb" alt="Interactive 3D globe of the Earth"
+      loading="eager" orbit-sensitivity="0.45" interpolation-decay="160"
       camera-controls disable-zoom disable-pan auto-rotate auto-rotate-delay="0" rotation-per-second="12deg"
-      interaction-prompt="none" camera-orbit="-20deg 75deg auto" shadow-intensity="0"></model-viewer>
+      interaction-prompt="none" camera-orbit="-20deg 90deg auto" min-camera-orbit="auto 90deg auto" max-camera-orbit="auto 90deg auto" shadow-intensity="0">
+      <div slot="progress-bar"></div>
+    </model-viewer>
   </div>
 </section>
 
