@@ -235,3 +235,53 @@
   if (document.fonts && document.fonts.ready) { document.fonts.ready.then(refresh); }
   refresh();
 })();
+
+/* globe: after the drag is released, let it coast and slow down gradually */
+(function () {
+  var globe = document.querySelector("model-viewer.map");
+  if (!globe || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
+
+  var COAST = 0.45;        /* seconds for the spin to lose most of its speed; higher glides longer */
+  var MAX_SPEED = 6;       /* radians per second, so a hard flick does not whip it around */
+  var samples = [], dragging = false, coasting = 0;
+
+  function theta() { return globe.getCameraOrbit().theta; }
+  function wrap(a) { return Math.atan2(Math.sin(a), Math.cos(a)); }
+
+  globe.addEventListener("pointerdown", function () {
+    dragging = true; samples = [];
+    if (coasting) { cancelAnimationFrame(coasting); coasting = 0; }
+  });
+
+  globe.addEventListener("camera-change", function (ev) {
+    if (!dragging || ev.detail.source !== "user-interaction") { return; }
+    var now = performance.now();
+    samples.push({ t: now, a: theta() });
+    while (samples.length > 2 && now - samples[0].t > 90) { samples.shift(); }
+  });
+
+  function release() {
+    if (!dragging) { return; }
+    dragging = false;
+    if (samples.length < 2) { return; }
+    var a = samples[0], b = samples[samples.length - 1];
+    var dt = (b.t - a.t) / 1000;
+    if (dt <= 0 || performance.now() - b.t > 80) { return; }   /* held still before letting go */
+    var v = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, wrap(b.a - a.a) / dt));
+    /* the drawn globe trails the drag target by 2 x decay x speed; start the coast from the target */
+    var lag = 2 * (globe.interpolationDecay || 50) / 1000;
+    var angle = b.a + v * lag, last = performance.now();
+
+    function step(now) {
+      var s = (now - last) / 1000; last = now;
+      angle += v * s;
+      v *= Math.exp(-s / COAST);
+      globe.cameraOrbit = angle + "rad 90deg auto";
+      coasting = Math.abs(v) > 0.02 ? requestAnimationFrame(step) : 0;
+    }
+    coasting = requestAnimationFrame(step);
+  }
+
+  window.addEventListener("pointerup", release);
+  window.addEventListener("pointercancel", release);
+})();
