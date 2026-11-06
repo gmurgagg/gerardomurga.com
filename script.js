@@ -276,7 +276,7 @@
       var s = (now - last) / 1000; last = now;
       angle += v * s;
       v *= Math.exp(-s / COAST);
-      globe.cameraOrbit = angle + "rad 90deg auto";
+      globe.cameraOrbit = angle + "rad 74deg auto";
       coasting = Math.abs(v) > 0.02 ? requestAnimationFrame(step) : 0;
     }
     coasting = requestAnimationFrame(step);
