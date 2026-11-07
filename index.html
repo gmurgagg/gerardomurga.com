@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=Jost:wght@700&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add("has-js");</script>
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body class="home">
 
@@ -129,6 +129,19 @@
       <span class="visually-hidden">(PDF, opens in a new tab)</span>
     </a>
   </div>
+  <!-- contact card on the index view, styled like the app window -->
+  <aside class="contact-card" aria-labelledby="contact-card-title">
+    <h2 id="contact-card-title" class="contact-card-title">Get in touch</h2>
+    <p class="contact-card-text">Open to data science and machine learning internships.</p>
+    <a class="contact-card-email" href="mailto:gmurga@stanford.edu">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="3.3" width="12.4" height="9.4" rx="1.6"/><path d="m2.4 4.3 5.6 4.4 5.6-4.4"/></svg>
+      <span>gmurga@<wbr>stanford.edu</span>
+    </a>
+    <div class="contact-card-links">
+      <a href="https://github.com/gmurgagg" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
+      <a href="https://www.linkedin.com/in/gerardomurga/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
+    </div>
+  </aside>
   <!-- 2D ragdoll stickman (after the stickman by LDev) that hangs from the cursor on the index view -->
   <canvas class="ragdoll" aria-hidden="true"></canvas>
     <model-viewer class="map" src="assets/earth.glb" alt="Interactive 3D globe of the Earth"
@@ -196,9 +209,9 @@
       <p>Open to data science and machine learning internships.</p>
     </div>
     <div class="contact-links">
-      <a href="mailto:gerardo@gerardomurga.com">Email</a>
+      <a href="mailto:gmurga@stanford.edu">Email</a>
       <a href="https://github.com/gmurgagg">GitHub</a>
-      <a href="https://www.linkedin.com/">LinkedIn</a>
+      <a href="https://www.linkedin.com/in/gerardomurga/">LinkedIn</a>
     </div>
   </section>
 
@@ -206,7 +219,7 @@
 </div>
 
 <script type="module" src="https://unpkg.com/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
 
 </body>
 </html>

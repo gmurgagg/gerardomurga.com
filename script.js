@@ -97,6 +97,7 @@
   var em = core.querySelector(".email");
   var map = pin.querySelector(".map");
   var sq = pin.querySelector(".grey-square");
+  var card = pin.querySelector(".contact-card");
   var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   var cols = {
@@ -149,6 +150,8 @@
       else { window.requestAnimationFrame(warm); }
     }
     window.requestAnimationFrame(warm);
+    /* safety net: never stay invisible for long, even if frames never run smoothly */
+    setTimeout(function () { if (warming) { warming = false; appear(); } }, 3500);
   }
   function appear() {
     var shown = clamp(window.scrollY * SPEED / (window.innerHeight * 0.9));
@@ -160,6 +163,7 @@
       render(cur);
       if (globeIn < 1) { window.requestAnimationFrame(step); }
     }
+    globeIn = 0.0001; render(cur);       /* drop below the screen now; the rise starts on the next frame */
     window.requestAnimationFrame(step);
   }
   map.addEventListener("load", globeLoaded);
@@ -229,6 +233,7 @@
       map.style.transform = "translate3d(0," + ((1 - ge) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * ge) + ")";
     }
     sq.style.transform = "translate3d(" + ((1 - e) * vw * 0.45) + "px,0,0)";
+    if (card) { card.style.transform = "translate3d(" + (-(1 - e) * vw * 0.6) + "px,-50%,0)"; }   /* contact card slides in from the left */
     settleGlobe(e);
   }
 

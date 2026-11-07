@@ -611,7 +611,7 @@
     --cc-side: #262626; --cc-main: #1c1c1c; --cc-line: #343434;
     --cc-text: #ececec; --cc-mute: #9b9b9b; --cc-faint: #6f6f6f;
     --cc-hover: rgba(255, 255, 255, 0.08); --cc-pill: #383838; --cc-accent: #d97757;
-    width: 100%; height: min(52vh, 460px, calc(100vh - max(30vh, 230px) - 96px)); border-radius: 14px;
+    width: 100%; height: var(--cc-h, min(52vh, 460px)); border-radius: 14px;
     display: grid; grid-template-columns: 36% 1fr; overflow: hidden;
     background: var(--cc-main); border: 1px solid #3c3c3c;
     box-shadow:
@@ -735,18 +735,74 @@
   .cc.is-still .cc-msg { opacity: 1; transform: none; }
   .cc.is-still .cc-think { display: none; }
 
+  /* index-view layout, shared so the pieces line up: contact card | globe | app window.
+     The globe is as tall as the window and centred on it, and shrinks if the space between is narrower. */
+  .pin {
+    --cc-top: max(30vh, 230px);
+    --cc-h: min(52vh, 460px, calc(100vh - max(30vh, 230px) - 96px));
+    --cc-w: min(38vw, 600px);
+    --card-l: 3vw;
+    --card-w: min(19vw, 270px);
+    --g-left: calc(var(--card-l) + var(--card-w) + 2.5vw);
+    --g-size: min(var(--cc-h), calc(100vw - 0.5vw - var(--cc-w) - var(--g-left) - 2.5vw));
+  }
+
   .map {
-    position: absolute; z-index: 5; left: 7vw; top: max(30vh, 230px);
-    display: block; width: min(46vw, 62vh, 640px); aspect-ratio: 1; height: auto;
+    position: absolute; z-index: 5;
+    left: var(--g-left); top: calc(var(--cc-top) + (var(--cc-h) - var(--g-size)) / 2);
+    display: block; width: var(--g-size); aspect-ratio: 1; height: auto;
     background: transparent; --poster-color: transparent; outline: none;
     opacity: 0; will-change: transform, opacity;
     /* follows the globe's round outline, not the square element */
     filter: drop-shadow(0 0 18px rgba(255, 255, 255, calc(0.32 * var(--glow, 0))));
   }
 
+  /* Get in touch: same dark surface as the app window, with large, high-contrast text */
+  .contact-card {
+    position: absolute; z-index: 4;
+    left: var(--card-l); top: calc(var(--cc-top) + var(--cc-h) / 2); width: var(--card-w);
+    transform: translate3d(-60vw, -50%, 0); will-change: transform;
+    box-sizing: border-box; padding: 22px 20px 20px; border-radius: 14px;
+    background: #1c1c1c; border: 1px solid #3c3c3c; color: #ececec;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, calc(0.05 * var(--glow, 0))),
+      0 0 40px 2px rgba(255, 255, 255, calc(0.13 * var(--glow, 0))),
+      0 30px 60px -28px rgba(0, 0, 0, 0.6);
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .contact-card-title {
+    margin: 0 0 8px; padding: 0; border: 0;
+    font: 700 1.45rem/1.15 "Jost", "Futura", system-ui, sans-serif; letter-spacing: -0.01em; color: #f6efe2;
+  }
+  .contact-card-title::after { content: none; }
+  .contact-card-text { margin: 0 0 16px; font-size: 0.95rem; line-height: 1.45; color: #b9b9b9; }
+  .contact-card-email {
+    display: flex; align-items: center; gap: 9px;
+    padding: 11px 12px; border-radius: 10px;
+    background: #2b2b2b; border: 1px solid #444;
+    color: #f1b53a; font-weight: 600; font-size: clamp(0.8rem, 1.05vw, 0.98rem); text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .contact-card-email span { min-width: 0; overflow-wrap: normal; }   /* wraps only after the @ */
+  .contact-card-email svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .contact-card-email:hover { background: #333; border-color: #f1b53a; color: #ffc65a; }
+  .contact-card-email:focus-visible { outline: 2px solid #f1b53a; outline-offset: 3px; }
+  .contact-card-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .contact-card-links a {
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    padding: 9px 8px; border-radius: 10px; background: #2b2b2b; border: 1px solid #444;
+    color: #ececec; font-weight: 600; font-size: 0.9rem; text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .contact-card-links a span { color: #9b9b9b; font-size: 0.85em; transition: color 0.15s ease; }
+  .contact-card-links a:hover { background: #333; border-color: #8a8a8a; color: #fff; }
+  .contact-card-links a:hover span { color: #fff; }
+  .contact-card-links a:focus-visible { outline: 2px solid #f1b53a; outline-offset: 3px; }
+
   @media (max-width: 720px) {
     .opening h1 { font-size: 2.6rem; }
     .map { left: 6vw; top: 30vh; width: min(80vw, 38vh); }
+    .contact-card { display: none; }   /* phones: the Contact section further down covers it */
     .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 1vw; }
     /* phones: just the sidebar with the project links */
     .cc-wrap { width: 58vw; height: auto; bottom: 3vh; gap: 10px; }
