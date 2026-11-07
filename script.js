@@ -136,6 +136,7 @@
     var state = e >= 0.999 ? "spin" : (e <= 0.001 ? "home" : "hold");
     if (state === globeState) { return; }
     globeState = state;
+    if (state === "spin") { map.autoRotateDelay = 0; }   /* spin right away on arrival; a touch sets its own pause */
     map.autoRotate = state === "spin" && !calm;
     if (state === "home") { map.cameraOrbit = HOME; map.jumpCameraToGoal(); }
   }
@@ -269,6 +270,14 @@
   window.addEventListener("resize", refresh);
   window.addEventListener("load", refresh);
   if (document.fonts && document.fonts.ready) { document.fonts.ready.then(refresh); }
+
+  /* "Back" on a project page links to index.html#index: open straight on the globe and chat
+     view (the end of the first scroll) instead of the full-screen intro */
+  if (location.hash === "#index") {
+    if ("scrollRestoration" in history) { history.scrollRestoration = "manual"; }
+    window.scrollTo({ top: window.innerHeight * 0.9 / SPEED, behavior: "instant" });
+    lastY = window.scrollY;
+  }
   refresh();
 })();
 
@@ -284,9 +293,14 @@
   function theta() { return globe.getCameraOrbit().theta; }
   function wrap(a) { return Math.atan2(Math.sin(a), Math.cos(a)); }
 
+  /* once touched, the globe holds still and only starts spinning again 4 seconds after release */
+  var PAUSE_MS = 4000, wasSpinning = false;
+
   globe.addEventListener("pointerdown", function () {
     dragging = true; samples = [];
     if (coasting) { cancelAnimationFrame(coasting); coasting = 0; }
+    wasSpinning = globe.autoRotate;
+    globe.autoRotate = false;
   });
 
   globe.addEventListener("camera-change", function (ev) {
@@ -299,6 +313,11 @@
   function release() {
     if (!dragging) { return; }
     dragging = false;
+    if (wasSpinning) {
+      /* turning auto-rotate back on restarts model-viewer's delay clock, so the wait counts from release */
+      globe.autoRotateDelay = PAUSE_MS;
+      globe.autoRotate = true;
+    }
     if (samples.length < 2) { return; }
     var a = samples[0], b = samples[samples.length - 1];
     var dt = (b.t - a.t) / 1000;
@@ -343,6 +362,12 @@
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     box.classList.add("is-still");
+    return;
+  }
+
+  /* coming back from a project page: the visitor has seen the intro, so show the answer right away */
+  if (location.hash === "#index") {
+    box.classList.add("is-instant", "is-sent", "is-answered");
     return;
   }
 
