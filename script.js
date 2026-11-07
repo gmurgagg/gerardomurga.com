@@ -618,7 +618,8 @@
   }
 
   /* ---------- where the hand goes ---------- */
-  var mouse = { x: 0, y: 0, in: false };
+  var mouse = { x: 0, y: 0, px: 0, py: 0, in: false };   /* px/py: last position outside the window */
+  var grip = null, wasOver = false;   /* grip: spot on the window's edge he grabbed, as fractions of its size */
 
   function onIndex() {
     var g = parseFloat(document.documentElement.style.getPropertyValue("--glow")) || 0;
@@ -626,14 +627,39 @@
     return g > 0.98 && r.top > -2 && r.top < 2;                   /* opening finished, still pinned */
   }
 
-  function restPoint() {                                        /* the window's top-left corner */
+  function restPoint() {
     var w = win.getBoundingClientRect(), p = pin.getBoundingClientRect();
-    return { x: w.left - p.left - 14 * S, y: w.top - p.top + 6 };   /* just outside, so he never covers it */
+    if (grip) { return { x: w.left + grip.x * w.width - p.left, y: w.top + grip.y * w.height - p.top }; }
+    return { x: w.left - p.left - 14 * S, y: w.top - p.top + 6 };   /* before any grab: beside the top-left corner */
+  }
+
+  /* where the cursor's path from (ax, ay) to (bx, by) crossed the window's border */
+  function entryPoint(w, ax, ay, bx, by) {
+    var t0 = 0, t1 = 1, dx = bx - ax, dy = by - ay;
+    var edges = [[-dx, ax - w.left], [dx, w.right - ax], [-dy, ay - w.top], [dy, w.bottom - ay]];
+    for (var i = 0; i < 4; i++) {
+      var pp = edges[i][0], q = edges[i][1];
+      if (pp === 0) { if (q < 0) { t0 = 2; } continue; }
+      var r = q / pp;
+      if (pp < 0) { t0 = Math.max(t0, r); } else { t1 = Math.min(t1, r); }
+    }
+    if (t0 <= t1 && t0 <= 1) { return { x: ax + t0 * dx, y: ay + t0 * dy }; }
+    /* no clean crossing (e.g. the page scrolled under the cursor): snap to the nearest edge */
+    var d = [bx - w.left, w.right - bx, by - w.top, w.bottom - by], m = Math.min.apply(null, d);
+    if (m === d[0]) { return { x: w.left, y: by }; }
+    if (m === d[1]) { return { x: w.right, y: by }; }
+    if (m === d[2]) { return { x: bx, y: w.top }; }
+    return { x: bx, y: w.bottom };
   }
 
   function chooseTarget() {
     var p = pin.getBoundingClientRect(), w = win.getBoundingClientRect();
-    var overWindow = mouse.x > w.left - 6 && mouse.x < w.right + 6 && mouse.y > w.top - 6 && mouse.y < w.bottom + 6;
+    var overWindow = mouse.in && mouse.x > w.left && mouse.x < w.right && mouse.y > w.top && mouse.y < w.bottom;
+    if (overWindow && !wasOver) {                                /* just crossed in: grab the edge right there */
+      var e = entryPoint(w, mouse.px, mouse.py, mouse.x, mouse.y);
+      grip = { x: Math.max(0, Math.min(1, (e.x - w.left) / w.width)), y: Math.max(0, Math.min(1, (e.y - w.top) / w.height)) };
+    }
+    wasOver = overWindow;
     holding = mouse.in && !overWindow && mouse.y > p.top && mouse.y < p.bottom;
     if (holding) { target.x = mouse.x - p.left; target.y = mouse.y - p.top; }
     else { var r = restPoint(); target.x = r.x; target.y = r.y; }
@@ -656,7 +682,7 @@
     if (!started) { anchor.x = target.x; anchor.y = target.y; pose(anchor.x, anchor.y); started = true; }
 
     /* the hand reaches the cursor quickly but not instantly, so switching grips swings him */
-    var k = holding ? 0.3 : 0.12;
+    var k = (holding || grip) ? 0.3 : 0.12;
     anchor.x += (target.x - anchor.x) * k; anchor.y += (target.y - anchor.y) * k;
     if (Math.abs(target.x - anchor.x) < 0.3 && Math.abs(target.y - anchor.y) < 0.3) { anchor.x = target.x; anchor.y = target.y; }
 
@@ -685,7 +711,10 @@
 
   window.addEventListener("pointermove", function (ev) {
     if (ev.pointerType && ev.pointerType !== "mouse") { return; }
-    mouse.x = ev.clientX; mouse.y = ev.clientY; mouse.in = true; wake();
+    mouse.x = ev.clientX; mouse.y = ev.clientY; mouse.in = true;
+    var w = win.getBoundingClientRect();                       /* remember the last spot outside the window */
+    if (!(mouse.x > w.left && mouse.x < w.right && mouse.y > w.top && mouse.y < w.bottom)) { mouse.px = mouse.x; mouse.py = mouse.y; }
+    wake();
   }, { passive: true });
   document.documentElement.addEventListener("pointerleave", function () { mouse.in = false; wake(); });
   window.addEventListener("blur", function () { mouse.in = false; wake(); });
