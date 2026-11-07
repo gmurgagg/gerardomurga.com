@@ -775,3 +775,20 @@
     Array.prototype.forEach.call(pins, function (pin) { pin.classList.remove("is-going"); });
   });
 })();
+
+/* phone layout: tell the CSS how tall the window column and the contact card really are,
+   so the globe above them gets exactly the space that is left */
+(function () {
+  var pin = document.querySelector(".showcase .pin");
+  var wrap = pin && pin.querySelector(".cc-wrap");
+  var card = pin && pin.querySelector(".contact-card");
+  if (!wrap || !card) { return; }
+  function sync() {
+    pin.style.setProperty("--wrap-h", wrap.offsetHeight + "px");
+    pin.style.setProperty("--card-h", card.offsetHeight + "px");
+  }
+  sync();
+  window.addEventListener("resize", sync);
+  window.addEventListener("load", sync);
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(sync); }
+})();

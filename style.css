@@ -923,12 +923,28 @@
 
   @media (max-width: 720px) {
     .opening h1 { font-size: 2.6rem; }
-    .map { left: 6vw; top: 30vh; width: min(80vw, 38vh); }
-    .contact-card { display: none; }   /* phones: the Contact section further down covers it */
+    /* phones: globe centred under the header, then the window + resume, then the contact card at the bottom.
+       --wrap-h and --card-h are measured by script.js so the globe takes exactly the room that is left. */
+    .pin {
+      --ph-top: 178px;
+      --ph-g: max(170px, min(80vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 34px)));
+    }
+    .map { left: calc(50vw - var(--ph-g) / 2); top: var(--ph-top); width: var(--ph-g); }
+    .contact-card {
+      bottom: 2vh; left: 0; right: 0; margin-inline: auto; width: min(86vw, 420px);
+      grid-template-columns: 1fr; gap: 8px; padding: 10px 12px;
+    }
+    .contact-card .contact-card-text { display: none; }          /* keep it short on a small screen */
+    .contact-card .contact-card-actions { flex-direction: row; gap: 6px; }
+    .contact-card .contact-card-email { flex: 1 1 auto; min-width: 0; font-size: 0.74rem; padding: 7px 8px; }
+    .contact-card .contact-card-links { flex: none; display: flex; gap: 6px; }
+    .contact-card .contact-card-links a { padding: 6px 8px; font-size: 0.74rem; }
+    .contact-card .contact-card-email svg, .contact-card .contact-card-links a span { display: none; }   /* room for the email on one line */
+    .contact-card .contact-card-email span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .contact-card.contact-card--inline { display: grid; grid-template-columns: 1fr; }
     .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 1vw; }
     /* phones: just the sidebar with the project links */
-    .cc-wrap { width: 58vw; height: auto; bottom: 3vh; gap: 10px; }
+    .cc-wrap { width: min(86vw, 420px); height: auto; left: 0; right: 0; margin-inline: auto; bottom: calc(2vh + var(--card-h, 84px) + 12px); gap: 10px; }
     .cc { height: auto; grid-template-columns: 1fr; border-radius: 12px; container-type: normal; }
     .resume-btn { width: 90%; padding: 10px 14px; font-size: 0.92rem; }
     .cc-main, .cc-menu, .cc-user { display: none; }
