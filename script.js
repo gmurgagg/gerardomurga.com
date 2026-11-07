@@ -301,3 +301,68 @@
   window.addEventListener("pointerup", release);
   window.addEventListener("pointercancel", release);
 })();
+
+/* app-window mockup: type "pls fix", send it, think for about four seconds, clear, repeat */
+(function () {
+  var box = document.querySelector(".cc");
+  if (!box) { return; }
+  var typed = box.querySelector(".cc-typed");
+  var spark = box.querySelector(".cc-spark");
+  var TEXT = "pls fix";
+  var GLYPHS = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    box.classList.add("is-still");
+    return;
+  }
+
+  var timers = [], sparkTimer = 0, running = false;
+  function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function setState(name, on) { box.classList.toggle(name, on); }
+
+  function spin(on) {
+    clearInterval(sparkTimer);
+    if (!on) { return; }
+    var i = 0;
+    sparkTimer = setInterval(function () { spark.textContent = GLYPHS[i++ % GLYPHS.length]; }, 120);
+  }
+
+  function cycle() {
+    typed.textContent = "";
+    ["is-typing", "is-sent", "is-thinking", "is-clearing"].forEach(function (c) { setState(c, false); });
+
+    var t = 900;                                    /* empty input for a moment */
+    later(t, function () { setState("is-typing", true); });
+    for (var i = 1; i <= TEXT.length; i++) {
+      (function (n) { later(t + 120 + n * 105, function () { typed.textContent = TEXT.slice(0, n); }); })(i);
+    }
+    t += 120 + TEXT.length * 105 + 450;             /* finished typing, short pause */
+    later(t, function () {                          /* send: input empties, message appears */
+      typed.textContent = ""; setState("is-typing", false); setState("is-sent", true);
+    });
+    later(t + 300, function () { setState("is-thinking", true); spin(true); });
+    t += 300 + 4000;                                /* about four seconds of thinking */
+    later(t, function () { setState("is-clearing", true); });
+    later(t + 450, function () { spin(false); setState("is-sent", false); setState("is-thinking", false); });
+    later(t + 500, cycle);
+  }
+
+  function start() { if (!running) { running = true; cycle(); } }
+  function stop() {
+    running = false; spin(false);
+    timers.forEach(clearTimeout); timers = [];
+  }
+
+  /* only animate while the window is on screen and the tab is open */
+  var onScreen = true;
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      onScreen = entries[0].isIntersecting;
+      if (onScreen && !document.hidden) { start(); } else { stop(); }
+    }).observe(box);
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) { stop(); } else if (onScreen) { start(); }
+  });
+  start();
+})();
