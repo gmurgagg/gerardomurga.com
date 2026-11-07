@@ -517,7 +517,8 @@
   .home nav a + a { border-left-color: var(--c-rule, rgba(255,255,255,0.2)); }
   .home .panel-about { padding-top: 34px; }
 
-  .showcase { position: relative; height: 193vh; }
+  /* the page now ends at the index view: one screen plus exactly the first scroll (0.9 / 1.1 of a screen) */
+  .showcase { position: relative; height: calc(100vh + 90vh / 1.1); }
 
   .pin { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--bg, #10294f); }
 

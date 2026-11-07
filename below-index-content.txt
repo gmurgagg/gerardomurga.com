@@ -1,0 +1,45 @@
+Content removed from the home page (index.html), below the globe / Claude Code view.
+Saved on 2026-11-06 before deleting it from the page. Links are in [brackets].
+
+
+ABOUT  (eyebrow: "Who I am")
+-----
+- Quantitative Economics, with a computer science minor. Class of 2028, focused on econometrics and applied machine learning.
+- Research assistant in the Stanford Economics Department, working on interpretable causal effects at the intersection of econometrics and machine learning with Professor Arun Chandrasekhar.
+- Lead singer and vice president of Stanford Mariachi Cardenal.
+- Rise Fellow. Long term, I want to widen access to financial tools across Latin America.
+
+
+PROJECTS  (eyebrow: "What I am building")
+--------
+1. Predicting NFL games with a factor pipeline   [tabs/nfl-model.html]
+   Tag: R · Machine learning
+   SVD, Varimax rotation and weighted least squares on fifteen seasons of play by play data, benchmarked against a random forest.
+
+2. When does microlending become a debt trap?   [tabs/microlending.html]
+   Tag: Interactive tool
+   Set the interest rate, the term and the income volatility, then see where repayment becomes impossible and where it does not.
+
+3. LectusXP   [tabs/lectusxp.html]
+   Tag: Shipped app
+   Short interactive readings for children, live on the Play Store. The project behind my Rise fellowship.
+
+
+ELSEWHERE  (eyebrow: "Other things I do")
+---------
+- Research papers   [tabs/papers.html]
+- Music   [tabs/music.html]
+- Speaking   [tabs/speaking.html]
+
+
+GET IN TOUCH
+------------
+Open to data science and machine learning internships.
+- Email      [mailto:gmurga@stanford.edu]
+- GitHub     [https://github.com/gmurgagg]
+- LinkedIn   [https://www.linkedin.com/in/gerardomurga/]
+
+
+FOOTER
+------
+Gerardo Murga

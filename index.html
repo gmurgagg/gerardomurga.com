@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=Jost:wght@700&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add("has-js");</script>
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body class="home">
 
@@ -17,10 +17,9 @@
   <div class="progress"><span id="progress-bar"></span></div>
   <div class="wrap">
     <nav>
-      <a href="#about">About</a>
-      <a href="#projects">Projects</a>
-      <a href="#elsewhere">Elsewhere</a>
-      <a href="#contact">Contact</a>
+      <a href="tabs/about.html">About</a>
+      <a href="tabs/projects.html">Projects</a>
+      <a href="tabs/other.html">Other</a>
     </nav>
   </div>
 </div>
@@ -81,7 +80,7 @@
         <a class="cc-item" href="tabs/nfl-model.html">Predicting NFL games</a>
         <a class="cc-item" href="tabs/microlending.html">Microlending debt trap</a>
         <a class="cc-item" href="tabs/lectusxp.html">LectusXP</a>
-        <p class="cc-group">elsewhere <span aria-hidden="true">&#8964;</span></p>
+        <p class="cc-group">other <span aria-hidden="true">&#8964;</span></p>
         <a class="cc-item" href="tabs/papers.html">Research papers</a>
         <a class="cc-item" href="tabs/music.html">Music</a>
         <a class="cc-item" href="tabs/speaking.html">Speaking</a>
@@ -103,15 +102,9 @@
           <p>The globe displays Gerardo&rsquo;s experiences around the world.</p>
           <p>For clear summaries, click these links instead:</p>
           <ul>
-            <li><b>About me:</b> <a href="#about">click here</a></li>
-            <li><b>Projects:</b>
-              <ul>
-                <li><a href="tabs/nfl-model.html">Predicting NFL games</a></li>
-                <li><a href="tabs/microlending.html">Microlending debt trap</a></li>
-                <li><a href="tabs/lectusxp.html">LectusXP</a></li>
-              </ul>
-            </li>
-            <li><b>Other:</b> <a href="#elsewhere">Other things I do</a></li>
+            <li><b>About me:</b> <a href="tabs/about.html">click here</a></li>
+            <li><b>Projects:</b> <a href="tabs/projects.html">See all projects</a></li>
+            <li><b>Other:</b> <a href="tabs/other.html">Other things I do</a></li>
           </ul>
         </div>
       </div>
@@ -169,72 +162,6 @@
     </model-viewer>
   </div>
 </section>
-<div class="showcase-fade" aria-hidden="true"></div>
-
-<div class="wrap">
-
-  <section class="panel panel-about reveal" id="about">
-    <p class="eyebrow">Who I am</p>
-    <h2>About</h2>
-    <ul class="facts">
-      <li><strong>Quantitative Economics, with a computer science minor.</strong> Class of 2028, focused on econometrics and applied machine learning.</li>
-      <li><strong>Research assistant in the Stanford Economics Department,</strong> working on interpretable causal effects at the intersection of econometrics and machine learning with Professor Arun Chandrasekhar.</li>
-      <li><strong>Lead singer and vice president of Stanford Mariachi Cardenal.</strong></li>
-      <li><strong>Rise Fellow.</strong> Long term, I want to widen access to financial tools across Latin America.</li>
-    </ul>
-  </section>
-
-  <section class="panel panel-projects reveal" id="projects">
-    <p class="eyebrow">What I am building</p>
-    <h2>Projects</h2>
-    <div class="projects">
-
-      <a class="project reveal" href="tabs/nfl-model.html">
-        <span class="tag">R &middot; Machine learning</span>
-        <h3>Predicting NFL games with a factor pipeline</h3>
-        <p>SVD, Varimax rotation and weighted least squares on fifteen seasons of play by play data, benchmarked against a random forest.</p>
-      </a>
-
-      <a class="project reveal" href="tabs/microlending.html">
-        <span class="tag">Interactive tool</span>
-        <h3>When does microlending become a debt trap?</h3>
-        <p>Set the interest rate, the term and the income volatility, then see where repayment becomes impossible and where it does not.</p>
-      </a>
-
-      <a class="project reveal" href="tabs/lectusxp.html">
-        <span class="tag">Shipped app</span>
-        <h3>LectusXP</h3>
-        <p>Short interactive readings for children, live on the Play Store. The project behind my Rise fellowship.</p>
-      </a>
-
-    </div>
-  </section>
-
-  <section class="elsewhere reveal" id="elsewhere">
-    <p class="eyebrow">Other things I do</p>
-    <h2>Elsewhere</h2>
-    <div class="more">
-      <a href="tabs/papers.html">Research papers <span>&rarr;</span></a>
-      <a href="tabs/music.html">Music <span>&rarr;</span></a>
-      <a href="tabs/speaking.html">Speaking <span>&rarr;</span></a>
-    </div>
-  </section>
-
-  <section class="contact reveal" id="contact">
-    <div>
-      <h2>Get in touch</h2>
-      <p>Open to data science and machine learning internships.</p>
-    </div>
-    <div class="contact-links">
-      <a href="mailto:gmurga@stanford.edu">Email</a>
-      <a href="https://github.com/gmurgagg">GitHub</a>
-      <a href="https://www.linkedin.com/in/gerardomurga/">LinkedIn</a>
-    </div>
-  </section>
-
-  <footer>Gerardo Murga</footer>
-</div>
-
 <script type="module" src="https://unpkg.com/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
 <script src="script.js?v=10"></script>
 
