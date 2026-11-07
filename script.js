@@ -582,7 +582,16 @@
 
   function draw() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1;
     ctx.clearRect(0, 0, W, H);
+    if (dive) {                                                  /* shrink (and turn a little) into the pin's point */
+      if (diveScale <= 0) { return; }
+      ctx.translate(dive.x, dive.y);
+      ctx.rotate((1 - diveScale) * 0.9);
+      ctx.scale(diveScale, diveScale);
+      ctx.translate(-dive.x, -dive.y);
+      ctx.globalAlpha = Math.min(1, diveScale * 3);
+    }
     var ink = "rgba(246, 239, 226, 0.95)";
 
     /* neck from the bottom edge of the head, so the line doesn't cross the face */
@@ -672,6 +681,8 @@
 
   /* ---------- loop: runs only while he's on screen and still moving ---------- */
   var running = false, last = 0, acc = 0, still = 0, shown = false, started = false;
+  /* dive: after a location pin is clicked, he is pulled to its point and shrinks into it */
+  var dive = null, diveScale = 1, DIVE_MS = 450;
 
   function frame(now) {
     var visible = onIndex() && !document.hidden;
@@ -684,10 +695,15 @@
     }
 
     chooseTarget();
+    if (dive) {
+      target.x = dive.x; target.y = dive.y;
+      var dp = Math.min(1, (now - dive.t0) / DIVE_MS);
+      diveScale = 1 - dp * dp;                                   /* speeds up as he falls in */
+    }
     if (!started) { anchor.x = target.x; anchor.y = target.y; pose(anchor.x, anchor.y); started = true; }
 
     /* the hand reaches the cursor quickly but not instantly, so switching grips swings him */
-    var k = (holding || grip) ? 0.3 : 0.12;
+    var k = dive ? 0.35 : (holding || grip) ? 0.3 : 0.12;
     anchor.x += (target.x - anchor.x) * k; anchor.y += (target.y - anchor.y) * k;
     if (Math.abs(target.x - anchor.x) < 0.3 && Math.abs(target.y - anchor.y) < 0.3) { anchor.x = target.x; anchor.y = target.y; }
 
@@ -704,7 +720,7 @@
 
     /* stop the loop once he has settled; any mouse move or scroll wakes him up */
     still = moved < 0.02 ? still + 1 : 0;
-    if (still > 45) { running = false; last = 0; return; }
+    if (still > 45 && (!dive || diveScale <= 0)) { running = false; last = 0; return; }
     window.requestAnimationFrame(frame);
   }
 
@@ -727,6 +743,13 @@
   window.addEventListener("resize", function () { resize(); started = false; wake(); });
   document.addEventListener("visibilitychange", wake);
   face.onload = wake;
+  window.addEventListener("stickman-dive", function (ev) {
+    var p = pin.getBoundingClientRect();
+    dive = { x: ev.detail.x - p.left, y: ev.detail.y - p.top, t0: performance.now() };
+    wake();
+  });
+  /* back from the location page (page restored from history): bring him back */
+  window.addEventListener("pageshow", function () { dive = null; diveScale = 1; started = false; wake(); });
 
   resize();
   /* the opening may already be finished on load (coming back to #index) */
@@ -741,6 +764,8 @@
       if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button === 1) { return; }   /* new-tab clicks open right away */
       ev.preventDefault();
       if (pin.classList.contains("is-going")) { return; }
+      var tip = pin.querySelector("img").getBoundingClientRect();   /* the pin's point, before it hops */
+      window.dispatchEvent(new CustomEvent("stickman-dive", { detail: { x: tip.left + tip.width / 2, y: tip.bottom } }));
       pin.classList.add("is-going");
       setTimeout(function () { window.location.href = pin.href; }, 500);
     });
