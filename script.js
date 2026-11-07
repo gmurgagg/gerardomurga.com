@@ -130,6 +130,40 @@
 
   /* the globe faces Mexico and the US while it rises, and only starts spinning once it has arrived;
      out of sight it is turned back to that view, so it never jumps while on screen */
+  /* globeIn: 0 until the globe's model has loaded. If it loads while still off screen it jumps
+     to 1; if the globe should already be showing (e.g. coming back to #index), it rises from
+     below over about a second, the same motion as the first scroll */
+  var globeIn = 0, warming = false, globeStarted = false;
+  function globeLoaded() {
+    if (globeStarted) { return; }
+    globeStarted = true;
+    /* the first time the globe is drawn the browser uploads its textures, which freezes
+       animation for up to a second. Do that first draw in place but invisible (warming), wait
+       until frames run smoothly again, and only then let the globe appear */
+    warming = true; render(cur);
+    var last = null, smooth = 0, began = performance.now();
+    function warm(now) {
+      smooth = (last !== null && now - last < 40) ? smooth + 1 : 0;
+      last = now;
+      if ((smooth >= 4 && now - began > 200) || now - began > 3000) { warming = false; appear(); }
+      else { window.requestAnimationFrame(warm); }
+    }
+    window.requestAnimationFrame(warm);
+  }
+  function appear() {
+    var shown = clamp(window.scrollY * SPEED / (window.innerHeight * 0.9));
+    if (shown < 0.02 || calm) { globeIn = 1; render(cur); return; }
+    var t0 = null, RISE = 1100;
+    function step(now) {
+      if (t0 === null) { t0 = now; }
+      globeIn = Math.max(0.0001, Math.min(1, (now - t0) / RISE));
+      render(cur);
+      if (globeIn < 1) { window.requestAnimationFrame(step); }
+    }
+    window.requestAnimationFrame(step);
+  }
+  map.addEventListener("load", globeLoaded);
+
   var HOME = "50deg 74deg auto", globeState = "";
   function settleGlobe(e) {
     if (!map.jumpCameraToGoal) { return; }          /* model-viewer has not loaded yet */
@@ -185,8 +219,15 @@
     root.style.setProperty("--glow", e.toFixed(3));   /* white glows fade in on the dark background */
 
     /* the map rises from the bottom on the same step as the grey square */
-    map.style.opacity = clamp(p * 4);
-    map.style.transform = "translate3d(0," + ((1 - e) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * e) + ")";
+    /* the globe never shows before its model is ready (globeIn), so it can't pop in half-loaded */
+    var gp = Math.min(p, globeIn), ge = ease(gp);
+    if (warming) {                       /* in place and drawn, but not visible yet */
+      map.style.opacity = "0.01"; map.style.transform = "none"; map.style.pointerEvents = "none";
+    } else {
+      map.style.pointerEvents = "";
+      map.style.opacity = clamp(gp * 4);
+      map.style.transform = "translate3d(0," + ((1 - ge) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * ge) + ")";
+    }
     sq.style.transform = "translate3d(" + ((1 - e) * vw * 0.45) + "px,0,0)";
     settleGlobe(e);
   }
@@ -273,12 +314,39 @@
 
   /* "Back" on a project page links to index.html#index: open straight on the globe and chat
      view (the end of the first scroll) instead of the full-screen intro */
-  if (location.hash === "#index") {
-    if ("scrollRestoration" in history) { history.scrollRestoration = "manual"; }
-    window.scrollTo({ top: window.innerHeight * 0.9 / SPEED, behavior: "instant" });
+  var toIndex = location.hash === "#index", userMoved = false;
+  function jumpToIndex() {
+    if (!toIndex || userMoved) { return; }
+    var landing = window.innerHeight * 0.9 / SPEED;
+    if (Math.abs(window.scrollY - landing) < 2) { return; }
+    /* "instant" is not accepted by every Safari, so switch off smooth scrolling for this one jump */
+    var html = document.documentElement, before = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";
+    window.scrollTo(0, landing);
+    html.style.scrollBehavior = before;
     lastY = window.scrollY;
+    refresh();
+  }
+  if (toIndex) {
+    if ("scrollRestoration" in history) { history.scrollRestoration = "manual"; }
+    /* stop re-applying once the visitor scrolls on their own */
+    ["wheel", "touchstart", "keydown"].forEach(function (t) {
+      window.addEventListener(t, function () { userMoved = true; }, { once: true, passive: true });
+    });
+    jumpToIndex();
+    /* some browsers move the page again while it finishes loading; put it back if so */
+    window.addEventListener("load", jumpToIndex);
+    window.addEventListener("pageshow", jumpToIndex);
+    setTimeout(jumpToIndex, 400);
   }
   refresh();
+  /* model-viewer's "load" event can arrive a couple of seconds after the model is actually
+     ready, so also watch its loaded flag and start the rise as soon as it flips */
+  (function watchLoaded(tries) {
+    if (globeStarted) { return; }
+    if (map.loaded) { globeLoaded(); return; }
+    if (tries < 300) { setTimeout(function () { watchLoaded(tries + 1); }, 100); }
+  })(0);
 })();
 
 /* globe: after the drag is released, let it coast and slow down gradually */
