@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Predicting NFL games with a factor pipeline — Gerardo Murga</title>
-<meta name="description" content="SVD, Varimax rotation and weighted least squares on fifteen seasons of play by play data, benchmarked against a random forest.">
+<meta name="description" content="Testing Prof. Arun Chandrasekhar's Rich Abundant Factors method on fifteen seasons of NFL plays, then predicting the 2025 season with a random forest: 60% accuracy against a 53% home-team baseline.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=10">
+<link rel="stylesheet" href="../style.css?v=12">
 <script>document.documentElement.classList.add("has-js");</script>
 </head>
 <body>
@@ -38,14 +38,74 @@
   <div class="wrap">
     <p class="page-kicker">Projects</p>
     <h1 class="page-title">Predicting NFL games with a factor pipeline</h1>
-    <p class="page-lede">SVD, Varimax rotation and weighted least squares on fifteen seasons of play by play data, benchmarked against a random forest.</p>
+    <p class="page-lede">Can a development-economics method predict football? Testing Rich Abundant Factors on fifteen seasons of NFL plays, and what worked instead.</p>
   </div>
 </header>
 
 <div class="wrap">
 
-  <section class="panel panel-page reveal">
-    <p>Write-up in progress. This is where the question, the method, the validation design and the honest result will go.</p>
+  <!-- quick read -->
+  <section class="panel panel-page writeup reveal">
+    <p class="eyebrow">Summary</p>
+    <h2>At a glance</h2>
+
+    <div class="stat-row">
+      <div class="stat"><span class="stat-num">770,000+</span><span class="stat-label">NFL plays cleaned, 2010&ndash;2025</span></div>
+      <div class="stat"><span class="stat-num">60%</span><span class="stat-label">correct winners, 2025 season</span></div>
+      <div class="stat"><span class="stat-num">53%</span><span class="stat-label">baseline: always pick the home team</span></div>
+    </div>
+
+    <p>Over the summer of 2026, I worked with <strong>Prof. Arun Chandrasekhar</strong>, a Stanford development economist, to test whether his <strong>Rich Abundant Factors (RAF)</strong> method, a statistical and machine learning technique, could <strong>predict NFL games</strong>.</p>
+    <p>Using <strong>R</strong>, I cleaned data from <strong>NFLfastR</strong> covering <strong>more than 770,000 plays from 2010 to 2025</strong> and built <strong>momentum variables</strong> (each team&rsquo;s stats from its last three games). However, the method needs many similar elements to find signal, and <strong>NFL games are too different from each other, so RAF failed</strong> in this application.</p>
+    <p>So I switched to a <strong>random forest classifier in Python</strong>, using averaged momentum variables and some fixed conditions. With this, I predicted the <strong>2025 season with 60% accuracy</strong>, compared with a <strong>53% baseline</strong> for always picking the home team, and <strong>65.83% when the Vegas spread was added</strong>.</p>
+    <p>The <strong>cleaned dataset and the Python model</strong> are in my <a href="https://github.com/gmurgagg/NFL_Momentum_Prediction" target="_blank" rel="noopener">public GitHub repo</a>, so anyone can reproduce the results.</p>
+  </section>
+
+  <!-- full story -->
+  <section class="panel panel-page writeup reveal">
+    <p class="eyebrow">Extended</p>
+    <h2>The full story</h2>
+
+    <h3>Why the NFL?</h3>
+    <p>Over the summer of 2026, I worked with <strong>Prof. Arun Chandrasekhar</strong>, a development economist at Stanford. He developed a rigorous statistical and machine learning method called <strong>Rich Abundant Factors (RAF)</strong>. It gives us a systematic way to <strong>find similar components inside an experiment and map how they interact</strong> with each other. The method was built and tested mostly for development economics experiments, so I wanted to see how far it could take us!</p>
+    <p>Curious whether I could drop out of Stanford and become a millionaire by gambling, I decided to <strong>apply Prof. Chandrasekhar&rsquo;s method to predicting NFL games</strong>. This was nothing like what the method was designed for, but as the saying goes: &ldquo;Math does not care&rdquo; (or something like that, I am citing my professor on this one).</p>
+
+    <h3>The goal</h3>
+    <p>Predict NFL game outcomes using only <strong>momentum variables</strong> (stats that capture how well each team has been playing recently) for both teams, plus a few <strong>static variables</strong> (fixed conditions of the game, like the type of field and the wind).</p>
+
+    <h3>The catch</h3>
+    <p><strong>RAF needs many elements that are similar enough to each other</strong>, so it can pick up signal from how groups of similar things interact. <strong>Every NFL game is so different from the others</strong> that this is hard, and it is the bread and butter of sports prediction.</p>
+
+    <h3>Building the dataset</h3>
+    <p>I spent many hours coding in <strong>R</strong>, cleaning a dataset from <strong>NFLfastR</strong>, a public database of <strong>more than 770,000 NFL plays from 2010 to 2025</strong>. I chose variables based on my own judgment and Claude&rsquo;s about what matters in a game. Some were dropped along the way because of missing data or because they were hard to standardize across 15 years.</p>
+
+    <h3>Fitting the NFL into RAF</h3>
+    <p>RAF relies on <strong>Singular Value Decomposition (SVD)</strong>. To use it, the data has to be split into two sides, which show up as the &ldquo;columns&rdquo; and &ldquo;rows&rdquo; of an interaction matrix. I assigned the <strong>home team&rsquo;s variables to the columns and the away team&rsquo;s to the rows</strong>.</p>
+    <p>That left my <strong>static variables out of scope</strong>, since they belong to the game as a whole and not to either team. I could have added them back with a linear regression (a standard method for fitting a line through data) on each cell of the grid, but that would have pulled me away from RAF&rsquo;s original method, and I wanted to keep it as pure as possible. So I worked <strong>only with momentum variables</strong>.</p>
+
+    <h3>Running RAF: a big null result</h3>
+    <p>Next, I created <strong>lagged momentum variables</strong>, meaning each team&rsquo;s stats from their last three games, and ran RAF. The goal was for the method to sort games into a small number of labeled groups, called <strong>factors</strong>, using two tools: <strong>weighted least squares (WLS)</strong>, a regression that gives more weight to more reliable data points, and <strong>varimax rotation</strong>, which sharpens the groups so each game clearly belongs to one.</p>
+    <p>As Jack, a PhD candidate and coauthor of the RAF paper, and I had expected, <strong>RAF could not find enough similarity between games to label them cleanly</strong>. I tried averaging the lagged variables to create more look-alike games and tested yards completed and final score as different outcome variables (the thing the model tries to predict), but nothing worked.</p>
+    <p><strong>Only three NFL games showed strong signal</strong>, each tied to a different factor, and every other game had basically 0.0000000000000000000000000&hellip; What a bummer!</p>
+
+    <h3>Plan B: a random forest</h3>
+    <p>After this big null result, I accepted that if I wanted to get rich gambling, RAF was not the tool for this job. So I switched to a <strong>standard random forest classifier in Python</strong>. I <strong>averaged each team&rsquo;s last three games</strong> of momentum variables and <strong>added back my static variables</strong>, then used the model to <strong>predict the 2025 NFL season</strong>.</p>
+
+    <h3>Results</h3>
+    <p>The model picked the <strong>right winner about 60% of the time</strong>, against <strong>53.38%</strong> for always picking the home team. Adding the <strong>Vegas spread</strong> (the point margin set by sportsbooks) raised accuracy to <strong>65.83%</strong>.</p>
+    <table class="result-table">
+      <caption>Share of 2025 games where the winner was predicted correctly</caption>
+      <thead><tr><th scope="col">Approach</th><th scope="col">Accuracy</th></tr></thead>
+      <tbody>
+        <tr><td>Always pick the home team</td><td>53.38%</td></tr>
+        <tr><td>Random forest, momentum variables only</td><td><strong>~60%</strong></td></tr>
+        <tr><td>Random forest with the Vegas spread added</td><td><strong>65.83%</strong></td></tr>
+        <tr><td>Vegas spread alone</td><td>65.48%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Reproduce it</h3>
+    <p>My <a href="https://github.com/gmurgagg/NFL_Momentum_Prediction" target="_blank" rel="noopener">public GitHub repo</a> contains the files necessary to reproduce my results, including the <strong>cleaned dataset</strong> and the <strong>Python random forest classifier</strong>.</p>
   </section>
 
   <section class="contact reveal">
