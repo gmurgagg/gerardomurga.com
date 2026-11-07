@@ -927,18 +927,19 @@
        --wrap-h and --card-h are measured by script.js so the globe takes exactly the room that is left. */
     .pin {
       --ph-top: 178px;
-      --ph-g: max(170px, min(80vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 34px)));
+      --ph-g: max(110px, min(80vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 34px)));
     }
     .map { left: calc(50vw - var(--ph-g) / 2); top: var(--ph-top); width: var(--ph-g); }
     .contact-card {
       bottom: 2vh; left: 0; right: 0; margin-inline: auto; width: min(86vw, 420px);
-      grid-template-columns: 1fr; gap: 8px; padding: 10px 12px;
+      grid-template-columns: 1fr; gap: 5px; padding: 7px 10px;
     }
+    .contact-card .contact-card-title { font-size: 0.98rem; margin: 0; }
     .contact-card .contact-card-text { display: none; }          /* keep it short on a small screen */
     .contact-card .contact-card-actions { flex-direction: row; gap: 6px; }
-    .contact-card .contact-card-email { flex: 1 1 auto; min-width: 0; font-size: 0.74rem; padding: 7px 8px; }
+    .contact-card .contact-card-email { flex: 1 1 auto; min-width: 0; font-size: 0.74rem; padding: 5px 8px; }
     .contact-card .contact-card-links { flex: none; display: flex; gap: 6px; }
-    .contact-card .contact-card-links a { padding: 6px 8px; font-size: 0.74rem; }
+    .contact-card .contact-card-links a { padding: 5px 8px; font-size: 0.74rem; white-space: nowrap; }
     .contact-card .contact-card-email svg, .contact-card .contact-card-links a span { display: none; }   /* room for the email on one line */
     .contact-card .contact-card-email span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .contact-card.contact-card--inline { display: grid; grid-template-columns: 1fr; }
@@ -953,4 +954,29 @@
     .cc-projects { margin-top: 0; }
     .cc-item { padding: 0.28em 0.6em; }
     .cc-group { margin-top: 0.45em; }
+  }
+
+  /* very narrow phones (320-340px): smaller card text so the email and both links share one row */
+  @media (max-width: 340px) {
+    .contact-card .contact-card-email, .contact-card .contact-card-links a { font-size: 0.66rem; padding: 5px 6px; }
+  }
+
+
+  /* short phones (iPhone SE, small Androids): compact the list and button so every piece fits */
+  @media (max-width: 720px) and (max-height: 720px) {
+    .pin { --ph-top: 168px; }
+    .cc-side { font-size: 10.5px; padding: 0.45em 0.4em 0.4em; }
+    .cc-top { padding-bottom: 0.3em; }
+    .cc-item { padding: 0.16em 0.6em; }
+    .cc-group { margin-top: 0.3em; }
+    .cc-wrap { gap: 7px; }
+    .resume-btn { padding: 7px 14px; font-size: 0.86rem; }
+  }
+
+  /* very short phones (original iPhone SE, 568px tall): drop the window's title bar and tighten the list */
+  @media (max-width: 720px) and (max-height: 600px) {
+    .pin { --ph-top: 160px; --ph-g: max(90px, min(80vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 28px))); }
+    .cc-top { display: none; }
+    .cc-side { font-size: 10px; padding-top: 0.35em; }
+    .cc-item { padding: 0.1em 0.6em; }
   }

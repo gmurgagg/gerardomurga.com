@@ -232,8 +232,15 @@
       map.style.opacity = clamp(gp * 4);
       map.style.transform = "translate3d(0," + ((1 - ge) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * ge) + ")";
     }
-    sq.style.transform = "translate3d(" + ((1 - e) * vw * 0.45) + "px,0,0)";
-    if (card) { card.style.transform = "translate3d(" + ((1 - e) * vw * 0.6) + "px,0,0)"; }   /* contact card slides in from the right too */
+    /* the window column and the contact card slide in from the right. They start fully past the
+       screen's right edge (measured, so this holds on any screen) and stay hidden until the scroll starts */
+    function slideIn(el, minShare) {
+      var away = Math.max(vw * minShare, vw - el.offsetLeft + 24);
+      el.style.transform = "translate3d(" + ((1 - e) * away) + "px,0,0)";
+      el.style.visibility = e <= 0.001 ? "hidden" : "visible";
+    }
+    slideIn(sq, 0.45);
+    if (card) { slideIn(card, 0.6); }
     settleGlobe(e);
   }
 
