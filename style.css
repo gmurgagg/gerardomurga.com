@@ -603,7 +603,7 @@
     --cc-text: #ececec; --cc-mute: #9b9b9b; --cc-faint: #6f6f6f;
     --cc-hover: rgba(255, 255, 255, 0.08); --cc-pill: #383838; --cc-accent: #d97757;
     width: 100%; height: min(52vh, 460px, calc(100vh - max(30vh, 230px) - 96px)); border-radius: 14px;
-    display: grid; grid-template-columns: 40% 1fr; overflow: hidden;
+    display: grid; grid-template-columns: 36% 1fr; overflow: hidden;
     background: var(--cc-main); border: 1px solid #3c3c3c;
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, calc(0.05 * var(--glow, 0))),
@@ -660,9 +660,12 @@
   }
   .cc-title { color: var(--cc-mute); padding-left: 0.2em; }
 
-  .cc-chat { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 0.9em; padding: 1em 0.2em; }
+  .cc-chat {
+    flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0.8em; padding: 0.9em 0.2em 0.7em;
+    overflow-y: auto; scrollbar-width: thin; scrollbar-color: #444 transparent;
+  }
   .cc-msg {
-    align-self: flex-end; background: var(--cc-pill); padding: 0.5em 0.85em; border-radius: 0.9em;
+    align-self: flex-end; max-width: 88%; background: var(--cc-pill); padding: 0.5em 0.85em; border-radius: 0.9em;
     opacity: 0; transform: translateY(0.6em); transition: opacity 0.3s ease, transform 0.3s ease;
   }
   .cc-think {
@@ -679,7 +682,27 @@
 
   .cc.is-sent .cc-msg { opacity: 1; transform: none; }
   .cc.is-thinking .cc-think { opacity: 1; }
-  .cc.is-clearing .cc-msg, .cc.is-clearing .cc-think { opacity: 0; transition-duration: 0.4s; }
+  .cc.is-answered .cc-think { display: none; }
+
+  /* the reply: shown by default, held back only while the script plays the intro */
+  .cc-reply { line-height: 1.45; color: var(--cc-text); }
+  .cc-reply p { margin: 0 0 0.55em; }
+  .cc-reply ul { margin: 0; padding: 0; list-style: none; }
+  .cc-reply > ul > li { margin: 0.3em 0; }
+  .cc-reply ul ul { margin: 0.15em 0 0 0.2em; }
+  .cc-reply ul ul li { position: relative; padding-left: 0.95em; margin: 0.12em 0; }
+  .cc-reply ul ul li::before { content: ""; position: absolute; left: 0.2em; top: 0.68em; width: 0.3em; height: 0.3em; border-radius: 50%; background: var(--cc-mute); }
+  .cc-reply b { font-weight: 600; }
+  .cc-reply a {
+    color: #f0a585; text-decoration: underline; text-decoration-color: rgba(240, 165, 133, 0.45);
+    text-underline-offset: 0.18em; border-radius: 0.25em; transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .cc-reply a:hover { color: #ffc4aa; text-decoration-color: currentColor; background: rgba(240, 165, 133, 0.1); }
+  .cc-reply a:focus-visible { outline: 2px solid var(--cc-accent); outline-offset: 2px; }
+
+  .has-js .cc:not(.is-answered):not(.is-still) .cc-reply { display: none; }
+  .cc.is-answered .cc-reply-line { animation: cc-in 0.35s ease both; }
+  @keyframes cc-in { from { opacity: 0; transform: translateY(0.4em); } to { opacity: 1; transform: none; } }
 
   .cc-input {
     display: flex; align-items: center; gap: 0.6em;
@@ -690,6 +713,7 @@
   .cc-ph { color: var(--cc-faint); overflow: hidden; text-overflow: ellipsis; }
   .cc-caret { width: 1px; height: 1.1em; background: var(--cc-text); margin-left: 1px; opacity: 0; }
   .cc.is-typing .cc-ph { display: none; }
+  .cc.is-typing .cc-field { justify-content: flex-end; }   /* long prompts show their newest letters */
   .cc.is-typing .cc-caret { opacity: 1; animation: cc-blink 1s steps(1) infinite; }
   @keyframes cc-blink { 50% { opacity: 0; } }
 
@@ -698,8 +722,7 @@
 
   /* a still frame for visitors who prefer less motion */
   .cc.is-still .cc-msg { opacity: 1; transform: none; }
-  .cc.is-still .cc-think { opacity: 1; }
-  .cc.is-still .cc-think-text { animation: none; color: var(--cc-mute); background: none; }
+  .cc.is-still .cc-think { display: none; }
 
   .map {
     position: absolute; z-index: 5; left: 7vw; top: max(30vh, 230px);

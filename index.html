@@ -93,17 +93,33 @@
       </div>
     </aside>
 
-    <div class="cc-main" aria-hidden="true">
-      <div class="cc-title">New session</div>
+    <div class="cc-main">
+      <div class="cc-title" aria-hidden="true">New session</div>
       <div class="cc-chat">
-        <div class="cc-msg">pls fix</div>
-        <div class="cc-think"><span class="cc-spark">&#10043;</span><span class="cc-think-text">Thinking&hellip;</span></div>
+        <div class="cc-msg" aria-hidden="true">How can I use the website?</div>
+        <div class="cc-think" aria-hidden="true"><span class="cc-spark">&#10043;</span><span class="cc-think-text">Thinking&hellip;</span></div>
+        <!-- the reply stays on screen so visitors can click its links -->
+        <div class="cc-reply" aria-label="How to use this website">
+          <p>The globe displays Gerardo&rsquo;s experiences around the world.</p>
+          <p>For clear summaries, click these links instead:</p>
+          <ul>
+            <li><b>About me:</b> <a href="#about">click here</a></li>
+            <li><b>Projects:</b>
+              <ul>
+                <li><a href="tabs/nfl-model.html">Predicting NFL games</a></li>
+                <li><a href="tabs/microlending.html">Microlending debt trap</a></li>
+                <li><a href="tabs/lectusxp.html">LectusXP</a></li>
+              </ul>
+            </li>
+            <li><b>Other:</b> <a href="#elsewhere">Other things I do</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="cc-input">
+      <div class="cc-input" aria-hidden="true">
         <svg viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></svg>
         <span class="cc-field"><span class="cc-typed"></span><span class="cc-caret"></span><span class="cc-ph">Describe a task or ask a question</span></span>
       </div>
-      <div class="cc-meta"><span>Default &#8964;</span><span>Repo &#8964;</span><span class="cc-model">Opus 5.5 <em>Medium</em></span></div>
+      <div class="cc-meta" aria-hidden="true"><span>Default &#8964;</span><span>Repo &#8964;</span><span class="cc-model">Opus 5.5 <em>Medium</em></span></div>
     </div>
   </div>
     <a class="resume-btn" href="assets/GerardoMurga_Resume.pdf" target="_blank" rel="noopener">

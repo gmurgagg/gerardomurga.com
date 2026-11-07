@@ -222,9 +222,28 @@
     window.requestAnimationFrame(step);
   }
 
+  /* links to a section on this page (#about, #projects...) go straight there instead of being
+     caught by the snap above, which would otherwise stop them at the end of the opening */
+  var jumping = false, jumpTimer = 0;
+  document.addEventListener("click", function (ev) {
+    var a = ev.target.closest && ev.target.closest('a[href^="#"]');
+    if (!a || ev.defaultPrevented || ev.metaKey || ev.ctrlKey || ev.shiftKey) { return; }
+    var target = document.getElementById(a.getAttribute("href").slice(1));
+    if (!target) { return; }
+    ev.preventDefault();
+    var margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    var top = target.getBoundingClientRect().top + window.scrollY - margin;
+    jumping = true;
+    if (history.pushState) { history.pushState(null, "", a.getAttribute("href")); }
+    window.scrollTo({ top: top, behavior: calm ? "auto" : "smooth" });
+    function done() { jumping = false; lastY = window.scrollY; window.removeEventListener("scrollend", done); }
+    window.addEventListener("scrollend", done);
+    clearTimeout(jumpTimer); jumpTimer = setTimeout(done, 1500);   /* browsers without scrollend */
+  });
+
   function onScroll() {
     var y = window.scrollY;
-    if (animating) { return; }
+    if (animating || jumping) { return; }
     var dir = y > lastY ? 1 : -1;
     lastY = y;
     var vh = window.innerHeight;
@@ -303,67 +322,63 @@
   window.addEventListener("pointercancel", release);
 })();
 
-/* app-window mockup: type "pls fix", send it, think for about four seconds, clear, repeat */
+/* app-window mockup: type the question, think briefly, then answer with links.
+   It plays once when the window comes into view; the answer stays so visitors can click it. */
 (function () {
   var box = document.querySelector(".cc");
   if (!box) { return; }
   var typed = box.querySelector(".cc-typed");
   var spark = box.querySelector(".cc-spark");
-  var TEXT = "pls fix";
-  var GLYPHS = ["·", "✢", "✳", "✶", "✻", "✽", "✻", "✶", "✳", "✢"];
+  var reply = box.querySelector(".cc-reply");
+  var TEXT = "How can I use the website?";
+  var THINK_MS = 1800;
+  var GLYPHS = ["\u00b7", "\u2722", "\u2733", "\u2736", "\u273b", "\u273d", "\u273b", "\u2736", "\u2733", "\u2722"];
+
+  /* each paragraph and list row of the answer fades in a moment after the last */
+  var lines = reply ? reply.querySelectorAll(":scope > p, :scope > ul > li") : [];
+  Array.prototype.forEach.call(lines, function (el, i) {
+    el.classList.add("cc-reply-line");
+    el.style.animationDelay = (i * 0.14) + "s";
+  });
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     box.classList.add("is-still");
     return;
   }
 
-  var timers = [], sparkTimer = 0, running = false;
-  function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
-  function setState(name, on) { box.classList.toggle(name, on); }
+  var played = false, sparkTimer = 0;
+  function set(name, on) { box.classList.toggle(name, on); }
 
-  function spin(on) {
-    clearInterval(sparkTimer);
-    if (!on) { return; }
-    var i = 0;
-    sparkTimer = setInterval(function () { spark.textContent = GLYPHS[i++ % GLYPHS.length]; }, 120);
-  }
-
-  function cycle() {
-    typed.textContent = "";
-    ["is-typing", "is-sent", "is-thinking", "is-clearing"].forEach(function (c) { setState(c, false); });
-
-    var t = 900;                                    /* empty input for a moment */
-    later(t, function () { setState("is-typing", true); });
+  function play() {
+    if (played) { return; }
+    played = true;
+    var t = 350;
+    set("is-typing", true);
     for (var i = 1; i <= TEXT.length; i++) {
-      (function (n) { later(t + 120 + n * 105, function () { typed.textContent = TEXT.slice(0, n); }); })(i);
+      (function (n) { setTimeout(function () { typed.textContent = TEXT.slice(0, n); }, t + n * 45); })(i);
     }
-    t += 120 + TEXT.length * 105 + 450;             /* finished typing, short pause */
-    later(t, function () {                          /* send: input empties, message appears */
-      typed.textContent = ""; setState("is-typing", false); setState("is-sent", true);
-    });
-    later(t + 300, function () { setState("is-thinking", true); spin(true); });
-    t += 300 + 4000;                                /* about four seconds of thinking */
-    later(t, function () { setState("is-clearing", true); });
-    later(t + 450, function () { spin(false); setState("is-sent", false); setState("is-thinking", false); });
-    later(t + 500, cycle);
+    t += TEXT.length * 45 + 350;
+    setTimeout(function () {                        /* send: input empties, question appears */
+      typed.textContent = ""; set("is-typing", false); set("is-sent", true);
+    }, t);
+    setTimeout(function () {
+      set("is-thinking", true);
+      var k = 0;
+      sparkTimer = setInterval(function () { spark.textContent = GLYPHS[k++ % GLYPHS.length]; }, 120);
+    }, t + 250);
+    setTimeout(function () {                        /* answer replaces the thinking row and stays */
+      clearInterval(sparkTimer);
+      set("is-thinking", false); set("is-answered", true);
+    }, t + 250 + THINK_MS);
   }
 
-  function start() { if (!running) { running = true; cycle(); } }
-  function stop() {
-    running = false; spin(false);
-    timers.forEach(clearTimeout); timers = [];
-  }
-
-  /* only animate while the window is on screen and the tab is open */
-  var onScreen = true;
+  /* start once most of the window has slid into view */
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      onScreen = entries[0].isIntersecting;
-      if (onScreen && !document.hidden) { start(); } else { stop(); }
-    }).observe(box);
+    var io = new IntersectionObserver(function (entries) {
+      if (entries[0].intersectionRatio >= 0.6) { io.disconnect(); play(); }
+    }, { threshold: [0.6] });
+    io.observe(box);
+  } else {
+    play();
   }
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden) { stop(); } else if (onScreen) { start(); }
-  });
-  start();
 })();
