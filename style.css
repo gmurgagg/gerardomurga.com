@@ -593,6 +593,15 @@
   .resume-btn:hover .resume-arrow, .resume-btn:focus-visible .resume-arrow { transform: translate(2px, -2px); }
   .resume-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
+  /* stickman hanging from the cursor: drawn on a canvas that never catches clicks */
+  .ragdoll {
+    position: absolute; inset: 0; width: 100%; height: 100%; z-index: 6;
+    pointer-events: none; opacity: 0; transition: opacity 0.35s ease;
+  }
+  .ragdoll.is-on { opacity: 1; }
+  /* only for a real mouse; phones and tablets skip it entirely */
+  @media not ((hover: hover) and (pointer: fine)) { .ragdoll { display: none; } }
+
   .visually-hidden {
     position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
     overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;

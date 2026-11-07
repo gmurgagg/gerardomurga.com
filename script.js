@@ -475,3 +475,226 @@
     play();
   }
 })();
+
+/* stickman ragdoll (a 2D take on the stickman by LDev) with Gerardo's face. On the index view one
+   hand grabs the cursor and the body hangs from it under gravity; over the Claude Code window, or
+   away from the index view, he lets go and hangs from the window's top-left corner instead.
+   Verlet physics: each joint is a point, each bone a fixed length, and a few "no closer than"
+   rules keep elbows, knees and the neck from folding the wrong way. */
+(function () {
+  var canvas = document.querySelector(".ragdoll");
+  var pin = document.querySelector(".showcase .pin");
+  var win = document.querySelector(".cc");
+  if (!canvas || !pin || !win || !canvas.getContext) { return; }
+  if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) { return; }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
+
+  var ctx = canvas.getContext("2d");
+  var face = new Image();
+  face.src = "assets/stickman_face_small.png";   /* small copy of stickman_face.png */
+
+  /* joints */
+  var HEAD = 0, NECK = 1, HIP = 2, ELB_R = 3, HAND_R = 4, ELB_L = 5, HAND_L = 6,
+      KNEE_R = 7, FOOT_R = 8, KNEE_L = 9, FOOT_L = 10;
+  var S = 1, pts = [], bones = [], limits = [], headR = 17;
+
+  function build() {
+    S = 0.5 * Math.max(0.8, Math.min(1.2, window.innerHeight / 820));   /* half the original size */
+    headR = 28 * S;                         /* half the face's drawn height */
+    var L = { neck: 34 * S, torso: 52 * S, upper: 32 * S, fore: 30 * S, thigh: 37 * S, shin: 35 * S };
+    bones = [
+      [HEAD, NECK, L.neck], [NECK, HIP, L.torso],
+      [NECK, ELB_R, L.upper], [ELB_R, HAND_R, L.fore],
+      [NECK, ELB_L, L.upper], [ELB_L, HAND_L, L.fore],
+      [HIP, KNEE_R, L.thigh], [KNEE_R, FOOT_R, L.shin],
+      [HIP, KNEE_L, L.thigh], [KNEE_L, FOOT_L, L.shin]
+    ];
+    /* joint limits: elbows and knees can't fold shut, the head can't fold onto the chest,
+       and the two feet / two hands keep a little apart */
+    limits = [
+      [NECK, HAND_R, 0.45 * (L.upper + L.fore)], [NECK, HAND_L, 0.45 * (L.upper + L.fore)],
+      [HIP, FOOT_R, 0.55 * (L.thigh + L.shin)], [HIP, FOOT_L, 0.55 * (L.thigh + L.shin)],
+      [HEAD, HIP, 0.93 * (L.neck + L.torso)],                 /* neck tilts up to about 45 degrees */
+      [KNEE_R, KNEE_L, 10 * S], [FOOT_R, FOOT_L, 18 * S], [HAND_L, HIP, 16 * S],
+      [HEAD, ELB_R, headR * 1.05], [HEAD, ELB_L, headR * 1.05]
+    ];
+  }
+
+  /* start standing under the anchor, arm raised, then let gravity take over */
+  function pose(ax, ay) {
+    var u = 32 * S, f = 30 * S, n = 34 * S, t = 52 * S, th = 37 * S, sh = 35 * S;
+    var neckX = ax - 4 * S, neckY = ay + u + f;
+    var place = [
+      [neckX, neckY - n], [neckX, neckY], [neckX, neckY + t],
+      [ax - 2 * S, ay + f], [ax, ay],
+      [neckX - 14 * S, neckY + u * 0.9], [neckX - 18 * S, neckY + u + f * 0.9],
+      [neckX + 6 * S, neckY + t + th], [neckX + 7 * S, neckY + t + th + sh],
+      [neckX - 6 * S, neckY + t + th], [neckX - 7 * S, neckY + t + th + sh]
+    ];
+    pts = place.map(function (p) { return { x: p[0], y: p[1], px: p[0], py: p[1] }; });
+  }
+
+  /* low gravity plus more drag reads as a heavier body: slower, calmer swings */
+  var GRAVITY = 560, DAMP = 0.975, ITER = 7, STEP = 1 / 60;
+  var anchor = { x: 0, y: 0 }, target = { x: 0, y: 0 }, holding = false;
+
+  function simulate(dt) {
+    var g = GRAVITY * dt * dt;
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i], vx = (p.x - p.px) * DAMP, vy = (p.y - p.py) * DAMP;
+      p.px = p.x; p.py = p.y;
+      p.x += vx; p.y += vy + g;
+    }
+    for (var k = 0; k < ITER; k++) {
+      pts[HAND_R].x = anchor.x; pts[HAND_R].y = anchor.y;          /* the hand holds on */
+      for (var b = 0; b < bones.length; b++) { solve(bones[b], false); }
+      for (var l = 0; l < limits.length; l++) { solve(limits[l], true); }
+    }
+    pts[HAND_R].x = anchor.x; pts[HAND_R].y = anchor.y;
+  }
+
+  function solve(c, minOnly) {
+    var a = pts[c[0]], b = pts[c[1]];
+    var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
+    if (minOnly && d >= c[2]) { return; }
+    var diff = (d - c[2]) / d * 0.5, ox = dx * diff, oy = dy * diff;
+    var aFixed = c[0] === HAND_R, bFixed = c[1] === HAND_R;
+    if (aFixed) { b.x -= ox * 2; b.y -= oy * 2; }
+    else if (bFixed) { a.x += ox * 2; a.y += oy * 2; }
+    else { a.x += ox; a.y += oy; b.x -= ox; b.y -= oy; }
+  }
+
+  /* ---------- drawing ---------- */
+  var dpr = 1, W = 0, H = 0;
+  function resize() {
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = pin.clientWidth; H = pin.clientHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    build();
+  }
+
+  function line(a, b) { ctx.moveTo(pts[a].x, pts[a].y); ctx.lineTo(pts[b].x, pts[b].y); }
+
+  function draw() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    var ink = "rgba(246, 239, 226, 0.95)";
+
+    /* neck from the bottom edge of the head, so the line doesn't cross the face */
+    var hx = pts[HEAD].x, hy = pts[HEAD].y, nx = pts[NECK].x, ny = pts[NECK].y;
+    var ang = Math.atan2(hy - ny, hx - nx), len = Math.hypot(hx - nx, hy - ny) || 1;
+    var edgeX = hx - Math.cos(ang) * headR, edgeY = hy - Math.sin(ang) * headR;
+
+    ctx.save();
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.strokeStyle = ink; ctx.lineWidth = Math.max(2, 3.4 * S);
+    ctx.shadowColor = "rgba(255, 255, 255, 0.35)"; ctx.shadowBlur = 5;
+    ctx.beginPath();
+    line(NECK, HIP);
+    line(NECK, ELB_R); line(ELB_R, HAND_R);
+    line(NECK, ELB_L); line(ELB_L, HAND_L);
+    line(HIP, KNEE_R); line(KNEE_R, FOOT_R);
+    line(HIP, KNEE_L); line(KNEE_L, FOOT_L);
+    if (len > headR) { ctx.moveTo(nx, ny); ctx.lineTo(edgeX, edgeY); }
+    ctx.stroke();
+
+    /* hands, feet and joints as small dots */
+    ctx.fillStyle = ink;
+    [HAND_R, HAND_L, FOOT_R, FOOT_L].forEach(function (i) {
+      ctx.beginPath(); ctx.arc(pts[i].x, pts[i].y, Math.max(1.6, 2.6 * S), 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.restore();
+
+    /* the head: the transparent face cutout, upright along the neck, with a soft glow */
+    if (face.complete && face.naturalWidth) {
+      var fh = headR * 2, fw = fh * face.naturalWidth / face.naturalHeight;
+      ctx.save();
+      ctx.translate(hx, hy);
+      ctx.rotate(ang + Math.PI / 2);
+      ctx.shadowColor = "rgba(255, 255, 255, 0.35)"; ctx.shadowBlur = 6;
+      ctx.drawImage(face, -fw / 2, -fh / 2, fw, fh);
+      ctx.restore();
+    }
+  }
+
+  /* ---------- where the hand goes ---------- */
+  var mouse = { x: 0, y: 0, in: false };
+
+  function onIndex() {
+    var g = parseFloat(document.documentElement.style.getPropertyValue("--glow")) || 0;
+    var r = pin.getBoundingClientRect();
+    return g > 0.98 && r.top > -2 && r.top < 2;                   /* opening finished, still pinned */
+  }
+
+  function restPoint() {                                        /* the window's top-left corner */
+    var w = win.getBoundingClientRect(), p = pin.getBoundingClientRect();
+    return { x: w.left - p.left - 14 * S, y: w.top - p.top + 6 };   /* just outside, so he never covers it */
+  }
+
+  function chooseTarget() {
+    var p = pin.getBoundingClientRect(), w = win.getBoundingClientRect();
+    var overWindow = mouse.x > w.left - 6 && mouse.x < w.right + 6 && mouse.y > w.top - 6 && mouse.y < w.bottom + 6;
+    holding = mouse.in && !overWindow && mouse.y > p.top && mouse.y < p.bottom;
+    if (holding) { target.x = mouse.x - p.left; target.y = mouse.y - p.top; }
+    else { var r = restPoint(); target.x = r.x; target.y = r.y; }
+  }
+
+  /* ---------- loop: runs only while he's on screen and still moving ---------- */
+  var running = false, last = 0, acc = 0, still = 0, shown = false, started = false;
+
+  function frame(now) {
+    var visible = onIndex() && !document.hidden;
+    if (visible !== shown) { shown = visible; canvas.classList.toggle("is-on", visible); }
+    if (!visible) {
+      running = false;
+      /* while the opening is on screen, look again shortly (cheap) so he appears as soon as it finishes */
+      if (!document.hidden && pin.getBoundingClientRect().bottom > 0) { setTimeout(wake, 400); }
+      return;
+    }
+
+    chooseTarget();
+    if (!started) { anchor.x = target.x; anchor.y = target.y; pose(anchor.x, anchor.y); started = true; }
+
+    /* the hand reaches the cursor quickly but not instantly, so switching grips swings him */
+    var k = holding ? 0.3 : 0.12;
+    anchor.x += (target.x - anchor.x) * k; anchor.y += (target.y - anchor.y) * k;
+    if (Math.abs(target.x - anchor.x) < 0.3 && Math.abs(target.y - anchor.y) < 0.3) { anchor.x = target.x; anchor.y = target.y; }
+
+    var dt = Math.min(0.05, (now - (last || now)) / 1000); last = now;
+    acc += dt;
+    var moved = 0;
+    while (acc >= STEP) {
+      simulate(STEP); acc -= STEP;
+      for (var i = 0; i < pts.length; i++) {                 /* how far each joint actually travelled */
+        moved += Math.abs(pts[i].x - pts[i].px) + Math.abs(pts[i].y - pts[i].py);
+      }
+    }
+    draw();
+
+    /* stop the loop once he has settled; any mouse move or scroll wakes him up */
+    still = moved < 0.02 ? still + 1 : 0;
+    if (still > 45) { running = false; last = 0; return; }
+    window.requestAnimationFrame(frame);
+  }
+
+  function wake() {
+    if (running) { return; }
+    running = true; still = 0; last = 0;
+    window.requestAnimationFrame(frame);
+  }
+
+  window.addEventListener("pointermove", function (ev) {
+    if (ev.pointerType && ev.pointerType !== "mouse") { return; }
+    mouse.x = ev.clientX; mouse.y = ev.clientY; mouse.in = true; wake();
+  }, { passive: true });
+  document.documentElement.addEventListener("pointerleave", function () { mouse.in = false; wake(); });
+  window.addEventListener("blur", function () { mouse.in = false; wake(); });
+  window.addEventListener("scroll", wake, { passive: true });
+  window.addEventListener("resize", function () { resize(); started = false; wake(); });
+  document.addEventListener("visibilitychange", wake);
+  face.onload = wake;
+
+  resize();
+  /* the opening may already be finished on load (coming back to #index) */
+  setTimeout(wake, 300);
+})();
