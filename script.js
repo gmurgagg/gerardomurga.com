@@ -100,9 +100,9 @@
   var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   var cols = {
-    "--bg": ["#10294f", "#eef1f5"], "--c-name": ["#ffffff", "#10294f"],
-    "--c-role": ["#b3c5dd", "#4d5c72"], "--c-link": ["#a9bcd6", "#4d5c72"],
-    "--c-hover": ["#ffffff", "#10294f"], "--c-rule": ["#3b5277", "#dde3ec"]
+    "--bg": ["#10294f", "#0b0b0e"], "--c-name": ["#ffffff", "#f6efe2"],
+    "--c-role": ["#b3c5dd", "#a9a297"], "--c-link": ["#a9bcd6", "#9c9ca6"],
+    "--c-hover": ["#ffffff", "#ffffff"], "--c-rule": ["#3b5277", "#24242a"]
   };
 
   function clamp(t) { return Math.max(0, Math.min(1, t)); }
@@ -181,6 +181,7 @@
     em.style.visibility = fade <= 0 ? "hidden" : "visible";
 
     for (var k in cols) { root.style.setProperty(k, mix(cols[k][0], cols[k][1], e)); }
+    root.style.setProperty("--glow", e.toFixed(3));   /* white glows fade in on the dark background */
 
     /* the map rises from the bottom on the same step as the grey square */
     map.style.opacity = clamp(p * 4);
