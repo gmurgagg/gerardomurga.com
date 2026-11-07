@@ -732,3 +732,21 @@
   /* the opening may already be finished on load (coming back to #index) */
   setTimeout(wake, 300);
 })();
+
+/* location pins on the globe: open their page half a second after the click, so the pin's hop shows */
+(function () {
+  var pins = document.querySelectorAll(".globe-pin");
+  Array.prototype.forEach.call(pins, function (pin) {
+    pin.addEventListener("click", function (ev) {
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button === 1) { return; }   /* new-tab clicks open right away */
+      ev.preventDefault();
+      if (pin.classList.contains("is-going")) { return; }
+      pin.classList.add("is-going");
+      setTimeout(function () { window.location.href = pin.href; }, 500);
+    });
+  });
+  /* coming back to this page from history: clear the hop state */
+  window.addEventListener("pageshow", function () {
+    Array.prototype.forEach.call(pins, function (pin) { pin.classList.remove("is-going"); });
+  });
+})();

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=Jost:wght@700&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add("has-js");</script>
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="home">
 
@@ -153,6 +153,19 @@
       camera-controls disable-zoom disable-pan auto-rotate-delay="0" rotation-per-second="-10.2deg"
       interaction-prompt="none" camera-orbit="50deg 74deg auto" min-camera-orbit="auto 74deg auto" max-camera-orbit="auto 74deg auto" shadow-intensity="0">
       <div slot="progress-bar"></div>
+      <!-- location pins: placed by latitude/longitude on the model, so they turn with the globe -->
+      <a class="globe-pin" data-visibility-attribute="visible" slot="hotspot-bay-area" href="tabs/bay-area.html"
+         data-position="5.788m 6.715m 6.512m" data-normal="0.5262m 0.6104m 0.5920m">
+        <img src="assets/location_pin.png" alt=""><span class="globe-pin-label">Bay Area</span>
+      </a>
+      <a class="globe-pin" data-visibility-attribute="visible" slot="hotspot-chihuahua" href="tabs/chihuahua.html"
+         data-position="8.169m 5.272m 5.146m" data-normal="0.7426m 0.4792m 0.4678m">
+        <img src="assets/location_pin.png" alt=""><span class="globe-pin-label">Chihuahua</span>
+      </a>
+      <a class="globe-pin" data-visibility-attribute="visible" slot="hotspot-mexico-city" href="tabs/mexico-city.html"
+         data-position="9.382m 3.660m 4.425m" data-normal="0.8529m 0.3327m 0.4023m">
+        <img src="assets/location_pin.png" alt=""><span class="globe-pin-label">Mexico City</span>
+      </a>
     </model-viewer>
   </div>
 </section>
@@ -223,7 +236,7 @@
 </div>
 
 <script type="module" src="https://unpkg.com/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
-<script src="script.js?v=8"></script>
+<script src="script.js?v=9"></script>
 
 </body>
 </html>
