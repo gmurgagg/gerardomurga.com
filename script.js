@@ -233,7 +233,7 @@
       map.style.transform = "translate3d(0," + ((1 - ge) * vh * 1.1) + "px,0) scale(" + (0.15 + 0.85 * ge) + ")";
     }
     sq.style.transform = "translate3d(" + ((1 - e) * vw * 0.45) + "px,0,0)";
-    if (card) { card.style.transform = "translate3d(" + (-(1 - e) * vw * 0.6) + "px,-50%,0)"; }   /* contact card slides in from the left */
+    if (card) { card.style.transform = "translate3d(" + ((1 - e) * vw * 0.6) + "px,0,0)"; }   /* contact card slides in from the right too */
     settleGlobe(e);
   }
 

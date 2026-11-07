@@ -564,6 +564,7 @@
 
   /* holds the window and the resume button so they slide in together */
   .cc-wrap {
+    top: var(--cc-top, max(30vh, 230px));
     width: min(38vw, 600px); height: auto; border-radius: 0;
     background: none; box-shadow: none;
     display: flex; flex-direction: column; align-items: center; gap: 16px;
@@ -735,21 +736,24 @@
   .cc.is-still .cc-msg { opacity: 1; transform: none; }
   .cc.is-still .cc-think { display: none; }
 
-  /* index-view layout, shared so the pieces line up: contact card | globe | app window.
-     The globe is as tall as the window and centred on it, and shrinks if the space between is narrower. */
+  /* index-view layout. Right column: app window, resume button, contact card (stacked).
+     The globe fills the space to the left of that column, centred in it. */
   .pin {
-    --cc-top: max(30vh, 230px);
-    --cc-h: min(52vh, 460px, calc(100vh - max(30vh, 230px) - 96px));
+    /* app window + resume button, centred as one group in the middle of the screen. The window
+       height is capped so the group never starts above 200px, where the name and tagline end. */
+    --cc-h: min(52vh, 460px, calc(100vh - 460px));
+    --cc-top: calc((100vh - var(--cc-h) - 60px) / 2);                     /* 60px = 16px gap + 44px resume button */
     --cc-w: min(38vw, 600px);
-    --card-l: 3vw;
-    --card-w: min(19vw, 270px);
-    --g-left: calc(var(--card-l) + var(--card-w) + 2.5vw);
-    --g-size: min(var(--cc-h), calc(100vw - 0.5vw - var(--cc-w) - var(--g-left) - 2.5vw));
+    /* globe: fills the space left of the window, kept below the portrait (which ends at 231px) */
+    --g-top: 240px;
+    --g-space: calc(100vw - 0.5vw - var(--cc-w));
+    --g-size: min(calc(var(--g-space) * 0.86), calc(100vh - var(--g-top) - 20px), 760px);
   }
 
   .map {
     position: absolute; z-index: 5;
-    left: var(--g-left); top: calc(var(--cc-top) + (var(--cc-h) - var(--g-size)) / 2);
+    left: calc((var(--g-space) - var(--g-size)) / 2);                      /* centred left to right */
+    top: calc(var(--g-top) + (100vh - var(--g-top) - 16px - var(--g-size)) / 2);
     display: block; width: var(--g-size); aspect-ratio: 1; height: auto;
     background: transparent; --poster-color: transparent; outline: none;
     opacity: 0; will-change: transform, opacity;
@@ -759,39 +763,43 @@
 
   /* Get in touch: same dark surface as the app window, with large, high-contrast text */
   .contact-card {
-    position: absolute; z-index: 4;
-    left: var(--card-l); top: calc(var(--cc-top) + var(--cc-h) / 2); width: var(--card-w);
-    transform: translate3d(-60vw, -50%, 0); will-change: transform;
-    box-sizing: border-box; padding: 22px 20px 20px; border-radius: 14px;
+    /* its own block at the bottom right: same width as the resume button and centred under it */
+    position: absolute; z-index: 4; bottom: 3vh;
+    width: calc(var(--cc-w) * 0.86); right: calc(0.5vw + var(--cc-w) * 0.07);
+    transform: translate3d(60vw, 0, 0); will-change: transform;
+    box-sizing: border-box;
+    display: grid; grid-template-columns: 1fr 1.05fr; gap: 10px 14px; align-items: center;
+    padding: 11px 13px; border-radius: 12px;
     background: #1c1c1c; border: 1px solid #3c3c3c; color: #ececec;
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, calc(0.05 * var(--glow, 0))),
-      0 0 40px 2px rgba(255, 255, 255, calc(0.13 * var(--glow, 0))),
-      0 30px 60px -28px rgba(0, 0, 0, 0.6);
+      0 0 34px 2px rgba(255, 255, 255, calc(0.12 * var(--glow, 0))),
+      0 24px 50px -26px rgba(0, 0, 0, 0.6);
     font-family: "Inter", system-ui, sans-serif;
   }
+  .contact-card-actions { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .contact-card-title {
-    margin: 0 0 8px; padding: 0; border: 0;
-    font: 700 1.45rem/1.15 "Jost", "Futura", system-ui, sans-serif; letter-spacing: -0.01em; color: #f6efe2;
+    margin: 0 0 4px; padding: 0; border: 0;
+    font: 700 1.12rem/1.15 "Jost", "Futura", system-ui, sans-serif; letter-spacing: -0.01em; color: #f6efe2;
   }
   .contact-card-title::after { content: none; }
-  .contact-card-text { margin: 0 0 16px; font-size: 0.95rem; line-height: 1.45; color: #b9b9b9; }
+  .contact-card-text { margin: 0; font-size: 0.8rem; line-height: 1.4; color: #b9b9b9; }
   .contact-card-email {
     display: flex; align-items: center; gap: 9px;
-    padding: 11px 12px; border-radius: 10px;
+    padding: 7px 10px; border-radius: 9px;
     background: #2b2b2b; border: 1px solid #444;
-    color: #f1b53a; font-weight: 600; font-size: clamp(0.8rem, 1.05vw, 0.98rem); text-decoration: none;
+    color: #f1b53a; font-weight: 600; font-size: clamp(0.74rem, 0.95vw, 0.86rem); text-decoration: none;
     transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
   .contact-card-email span { min-width: 0; overflow-wrap: normal; }   /* wraps only after the @ */
-  .contact-card-email svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .contact-card-email svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
   .contact-card-email:hover { background: #333; border-color: #f1b53a; color: #ffc65a; }
   .contact-card-email:focus-visible { outline: 2px solid #f1b53a; outline-offset: 3px; }
-  .contact-card-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .contact-card-links { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .contact-card-links a {
     display: flex; align-items: center; justify-content: center; gap: 5px;
-    padding: 9px 8px; border-radius: 10px; background: #2b2b2b; border: 1px solid #444;
-    color: #ececec; font-weight: 600; font-size: 0.9rem; text-decoration: none;
+    padding: 6px 8px; border-radius: 9px; background: #2b2b2b; border: 1px solid #444;
+    color: #ececec; font-weight: 600; font-size: 0.8rem; text-decoration: none;
     transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
   .contact-card-links a span { color: #9b9b9b; font-size: 0.85em; transition: color 0.15s ease; }
