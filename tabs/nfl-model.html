@@ -8,10 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=12">
+<link rel="stylesheet" href="../style.css?v=16">
 <script>document.documentElement.classList.add("has-js");</script>
 </head>
-<body>
+<body class="doc-dark">
 
 <div class="navbar">
   <div class="progress"><span id="progress-bar"></span></div>
@@ -44,10 +44,10 @@
 
 <div class="wrap">
 
-  <!-- quick read -->
-  <section class="panel panel-page writeup reveal">
+  <!-- the write-up reads as one plain document on a dark page, like the home page -->
+  <article class="doc">
+    <section class="doc-part">
     <p class="eyebrow">Summary</p>
-    <h2>At a glance</h2>
 
     <div class="stat-row">
       <div class="stat"><span class="stat-num">770,000+</span><span class="stat-label">NFL plays cleaned, 2010&ndash;2025</span></div>
@@ -59,12 +59,12 @@
     <p>Using <strong>R</strong>, I cleaned data from <strong>NFLfastR</strong> covering <strong>more than 770,000 plays from 2010 to 2025</strong> and built <strong>momentum variables</strong> (each team&rsquo;s stats from its last three games). However, the method needs many similar elements to find signal, and <strong>NFL games are too different from each other, so RAF failed</strong> in this application.</p>
     <p>So I switched to a <strong>random forest classifier in Python</strong>, using averaged momentum variables and some fixed conditions. With this, I predicted the <strong>2025 season with 60% accuracy</strong>, compared with a <strong>53% baseline</strong> for always picking the home team, and <strong>65.83% when the Vegas spread was added</strong>.</p>
     <p>The <strong>cleaned dataset and the Python model</strong> are in my <a href="https://github.com/gmurgagg/NFL_Momentum_Prediction" target="_blank" rel="noopener">public GitHub repo</a>, so anyone can reproduce the results.</p>
-  </section>
+    </section>
 
-  <!-- full story -->
-  <section class="panel panel-page writeup reveal">
+    <hr class="doc-divider">
+
+    <section class="doc-part">
     <p class="eyebrow">Extended</p>
-    <h2>The full story</h2>
 
     <h3>Why the NFL?</h3>
     <p>Over the summer of 2026, I worked with <strong>Prof. Arun Chandrasekhar</strong>, a development economist at Stanford. He developed a rigorous statistical and machine learning method called <strong>Rich Abundant Factors (RAF)</strong>. It gives us a systematic way to <strong>find similar components inside an experiment and map how they interact</strong> with each other. The method was built and tested mostly for development economics experiments, so I wanted to see how far it could take us!</p>
@@ -92,7 +92,7 @@
     <p>After this big null result, I accepted that if I wanted to get rich gambling, RAF was not the tool for this job. So I switched to a <strong>standard random forest classifier in Python</strong>. I <strong>averaged each team&rsquo;s last three games</strong> of momentum variables and <strong>added back my static variables</strong>, then used the model to <strong>predict the 2025 NFL season</strong>.</p>
 
     <h3>Results</h3>
-    <p>The model picked the <strong>right winner about 60% of the time</strong>, against <strong>53.38%</strong> for always picking the home team. Adding the <strong>Vegas spread</strong> (the point margin set by sportsbooks) raised accuracy to <strong>65.83%</strong>.</p>
+    <p>The model picked the <strong>right winner about 60% of the time</strong>, against <strong>53.38%</strong> for always picking the home team. Adding the <strong>Vegas spread</strong> (the point margin set by sportsbooks) raised accuracy to <strong>65.83%</strong>. Thus, <strong>the spread basically absorbs all of the signal</strong>.</p>
     <table class="result-table">
       <caption>Share of 2025 games where the winner was predicted correctly</caption>
       <thead><tr><th scope="col">Approach</th><th scope="col">Accuracy</th></tr></thead>
@@ -106,19 +106,26 @@
 
     <h3>Reproduce it</h3>
     <p>My <a href="https://github.com/gmurgagg/NFL_Momentum_Prediction" target="_blank" rel="noopener">public GitHub repo</a> contains the files necessary to reproduce my results, including the <strong>cleaned dataset</strong> and the <strong>Python random forest classifier</strong>.</p>
-  </section>
+    </section>
+  </article>
 
-  <section class="contact reveal">
-    <div>
-      <h2>Get in touch</h2>
-      <p>Open to data science and machine learning internships.</p>
+  <!-- same contact card as the home page -->
+  <aside class="contact-card contact-card--inline" aria-labelledby="contact-card-title">
+    <div class="contact-card-intro">
+      <h2 id="contact-card-title" class="contact-card-title">Get in touch</h2>
+      <p class="contact-card-text">Open to data science and machine learning internships.</p>
     </div>
-    <div class="contact-links">
-      <a href="mailto:gmurga@stanford.edu">Email</a>
-      <a href="https://github.com/gmurgagg">GitHub</a>
-      <a href="https://www.linkedin.com/in/gerardomurga/">LinkedIn</a>
+    <div class="contact-card-actions">
+      <a class="contact-card-email" href="mailto:gmurga@stanford.edu">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="3.3" width="12.4" height="9.4" rx="1.6"/><path d="m2.4 4.3 5.6 4.4 5.6-4.4"/></svg>
+        <span>gmurga@<wbr>stanford.edu</span>
+      </a>
+      <div class="contact-card-links">
+        <a href="https://github.com/gmurgagg" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
+        <a href="https://www.linkedin.com/in/gerardomurga/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
+      </div>
     </div>
-  </section>
+  </aside>
 
   <footer>Gerardo Murga</footer>
 </div>
