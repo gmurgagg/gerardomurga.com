@@ -363,12 +363,18 @@
   window.addEventListener("load", refresh);
   if (document.fonts && document.fonts.ready) { document.fonts.ready.then(refresh); }
 
-  /* "Back" on a project page links to index.html#index: open straight on the globe and chat
-     view (the end of the first scroll) instead of the full-screen intro */
-  var toIndex = location.hash === "#index", userMoved = false;
+  /* links from the other pages open this page at a spot instead of the full-screen intro:
+     index.html#index (place pages) lands where the first scroll lands; #about, #projects and
+     #other (Back and the top links) land on that section */
+  var hashTarget = location.hash.length > 1 && location.hash !== "#index" ? document.getElementById(location.hash.slice(1)) : null;
+  var toIndex = location.hash === "#index" || !!hashTarget, userMoved = false;
   function jumpToIndex() {
     if (!toIndex || userMoved) { return; }
     var land = landing();
+    if (hashTarget) {
+      land = hashTarget.getBoundingClientRect().top + window.scrollY - (parseFloat(getComputedStyle(hashTarget).scrollMarginTop) || 0);
+      land = Math.max(land, landing());      /* never inside the intro, where the snap would pull it back */
+    }
     if (Math.abs(window.scrollY - land) < 2) { return; }
     /* "instant" is not accepted by every Safari, so switch off smooth scrolling for this one jump */
     var html = document.documentElement, before = html.style.scrollBehavior;
