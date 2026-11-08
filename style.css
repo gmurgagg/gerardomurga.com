@@ -853,6 +853,7 @@
   /* the intro takes one screen plus exactly the first scroll (0.9 / 1.1 of a screen); the About, Projects
      and Other sections follow below it in normal scrolling */
   .showcase { position: relative; height: calc(100vh + 90vh / 1.1); }
+  @media (min-width: 721px) { .home .showcase { height: 100vh; } }   /* laptops: one screen, then About */
 
   .pin { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--bg, #10294f); }
 
@@ -1023,7 +1024,7 @@
 
   /* stickman hanging from the cursor: drawn on a canvas that never catches clicks */
   .ragdoll {
-    position: absolute; inset: 0; width: 100%; height: 100%; z-index: 6;
+    position: fixed; inset: 0; width: 100%; height: 100%; z-index: 60;
     pointer-events: none; opacity: 0; transition: opacity 0.35s ease;
   }
   .ragdoll.is-on { opacity: 1; }
@@ -1339,25 +1340,70 @@
   }
 
   /* ---------- home page: About, Projects and Other below the globe view, then the contact card ---------- */
-  body.home { background: #0b0b0e; }
-  .home-sec { background: #0b0b0e; padding: 84px 0 40px; overflow: visible; overflow-x: clip; }   /* glows never widen the page */
+  /* the page colour comes from script.js (--bg: blue on the intro, near black after), so the fixed doodle
+     layer can sit behind everything; the intro and the sections themselves are see-through */
+  body.home { background: var(--bg, #10294f); }
+  .home .page-deco { position: fixed; inset: 0; z-index: 0; opacity: calc(1 - 0.62 * var(--glow, 0)); }
+  .home .showcase, .home-sec, .home-end { position: relative; z-index: 1; }
+  .home .pin { background: transparent; }
+  .home-sec { padding: 84px 0 40px; overflow: visible; overflow-x: clip; }   /* glows never widen the page */
   .home-sec + .home-sec { padding-top: 56px; }
   .home-sec .works-head, .home-sec .about-wrap, .home-sec .works-stage, .home-sec .works-grid, .home-sec .works-nav { position: relative; z-index: 1; }
   .home-sec .works-head { margin-bottom: 22px; }
   .home-sec .works-heading { font-size: 2.3rem; }
   .home-sec .about-wrap { margin-top: 0; }
   .works-grid .work.work-static { width: auto; }             /* fill the grid column */
-  .home-end { position: relative; z-index: 1; padding-top: 40px; background: #0b0b0e; }
-  .home-end .contact-card--inline { margin: 0 auto 30px; grid-template-columns: minmax(0, 1fr) auto; }   /* the end of the page, centred; the buttons get the width they need */
-  .home-end .contact-card-actions { flex-direction: row; gap: 8px; }
-  .home-end .contact-card-email { flex: 1 1 auto; }
-  .home-end .contact-card-email span { white-space: nowrap; flex: none; }
-  .home-end .contact-card-links { flex: none; display: flex; gap: 8px; }
+  .home-end { padding-top: 40px; }
+
+  /* About: the card is the main thing, the globe a smaller extra on its right */
+  .home-sec .contact-row, .home-sec#about .works-head { max-width: 1180px; }
+  .home-sec .about-wrap {
+    max-width: 1180px; display: grid; grid-template-columns: minmax(0, 1fr) clamp(240px, 27vw, 360px);
+    gap: clamp(20px, 3vw, 44px); align-items: center;
+  }
+  .about-globe { position: relative; }
+  .about-globe .map {
+    position: relative; left: auto; top: auto; width: 100%; z-index: 2;
+    transition: opacity 0.9s ease;
+  }
+  .home .pin .cc-wrap { display: none; }                   /* laptops: no column on the intro */
+  .pin-contact { display: none; }
+  @media (max-width: 960px) and (min-width: 721px) {       /* narrow laptops: globe under the card */
+    .home-sec .about-wrap { grid-template-columns: 1fr; }
+    .about-globe { width: min(320px, 60vw); margin: 0 auto; }
+  }
+  /* contact buttons: one row at the top right of the About section */
+  .contact-row { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-bottom: 18px; }
+  .contact-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px; background: #2b2b2b; border: 1px solid #444;
+    color: #ececec; font-weight: 600; font-size: 0.86rem; line-height: 1.2; text-decoration: none; white-space: nowrap;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .contact-btn span[aria-hidden] { color: #9b9b9b; font-size: 0.85em; }
+  .contact-btn:hover { background: #333; border-color: #8a8a8a; color: #fff; }
+  .contact-btn:focus-visible { outline: 2px solid #f1b53a; outline-offset: 3px; }
+  .contact-btn--email { color: #f1b53a; }
+  .contact-btn--email svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .contact-btn--email:hover { border-color: #f1b53a; color: #ffc65a; }
+  .contact-btn--resume { background: linear-gradient(180deg, #f1b53a, var(--gold)); border-color: transparent; color: #17130a; }
+  .contact-btn--resume span[aria-hidden] { color: inherit; }
+  .contact-btn--resume:hover { background: linear-gradient(180deg, #ffc65a, #f1b53a); border-color: transparent; color: #17130a; }
   .home-end footer { color: #8a8a93; border-top-color: #2c2c30; }
   @media (max-width: 720px) {
+    .home .pin .cc-wrap { display: flex; }                 /* phones: section buttons + contact under the globe */
+    .pin-contact { display: grid; width: 100%; margin: 0; }
+    .home-sec .contact-row:not(.pin-contact) { display: none; }   /* already on the screen after the intro */
+    .about-globe { display: none; }                        /* the globe lives on the screen after the intro */
+    .home-sec .about-wrap { display: block; }
+    .home .page-deco img { display: none; }
+    .home .page-deco img.deco-7, .home .page-deco img.deco-9, .home .page-deco img.deco-1, .home .page-deco img.deco-5,
+    .home .page-deco img.deco-ph { display: block; }
+    .home .page-deco img.deco-ph { width: 52px !important; }
     .home-sec { padding: 64px 0 28px; }
     .home-sec .works-heading { font-size: 1.9rem; }
-    .home-end .contact-card-actions { flex-wrap: wrap; }
-    .home-end .contact-card-email { flex: 1 1 100%; justify-content: center; }
-    .home-end .contact-card-links { flex: 1 1 100%; display: grid; grid-template-columns: 1fr 1fr; }
+    .contact-row { display: grid; grid-template-columns: 1fr 1fr 1fr; justify-content: stretch; }
+    .contact-btn--email { grid-column: 1 / -1; }           /* phones: email on its own row, then the three buttons */
+    .contact-btn:not(.contact-btn--email) { padding: 8px 4px; font-size: 0.8rem; }
+    .contact-btn:not(.contact-btn--email) span[aria-hidden] { display: none; }
   }

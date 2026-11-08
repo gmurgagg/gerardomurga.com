@@ -43,8 +43,12 @@
     items.forEach(function (el) { observer.observe(el); });
   }
 
-  /* drifting rings in the header, plus the progress bar and active nav link */
-  var rings = document.querySelectorAll(".band-deco img, .band-front img");
+  /* drifting doodles behind the page, plus the progress bar and active nav link */
+  var rings = Array.prototype.slice.call(document.querySelectorAll(".band-deco img, .band-front img"));
+  /* home page: the doodle layer is fixed to the screen, so each doodle drifts at its own speed and,
+     once it leaves the screen, comes back in from the other edge; they keep moving all the way down */
+  var wrapAround = !!document.querySelector(".page-deco"), bases = null;
+  window.addEventListener("resize", function () { bases = null; });
   var bar = document.getElementById("progress-bar");
   var links = document.querySelectorAll("nav a");
   var sections = document.querySelectorAll("section[id]");
@@ -54,10 +58,17 @@
     var y = window.scrollY;
 
     if (!calm) {
-      rings.forEach(function (ring) {
+      var vh = window.innerHeight, M = 180, span = vh + 2 * M;
+      if (wrapAround && !bases) { bases = rings.map(function (r) { return r.offsetTop; }); }   /* read once, before writing */
+      rings.forEach(function (ring, i) {
         var speed = parseFloat(ring.getAttribute("data-speed")) || 0;
         var rot = parseFloat(ring.getAttribute("data-rot")) || 0;
-        ring.style.transform = "translate3d(0," + (y * speed) + "px,0) rotate(" + rot + "deg)";
+        var dy = y * speed;
+        if (wrapAround) {
+          var pos = bases[i] + dy;
+          dy = (((pos + M) % span) + span) % span - M - bases[i];   /* off one edge, back in at the other */
+        }
+        ring.style.transform = "translate3d(0," + dy + "px,0) rotate(" + rot + "deg)";
       });
     }
 
@@ -95,7 +106,18 @@
   var nm = core.querySelector("h1");
   var rl = core.querySelector(".role");
   var em = core.querySelector(".email");
-  var map = pin.querySelector(".map");
+  var map = document.querySelector("model-viewer.map");
+  var slot = document.querySelector(".about-globe");            /* laptops: the globe sits beside the About card */
+  var about = document.getElementById("about");
+  var phoneQ = window.matchMedia("(max-width: 720px)");
+  function isPhone() { return phoneQ.matches; }
+  /* phones keep the screen after the intro (globe, section buttons, contact); laptops go from the
+     intro straight to About, with the globe beside the card */
+  function placeGlobe() {
+    var home = isPhone() ? pin : slot;
+    if (home && map.parentNode !== home) { home.appendChild(map); }
+  }
+  placeGlobe();
   var sq = pin.querySelector(".grey-square");
   var card = pin.querySelector(".contact-card");
   var hint = pin.querySelector(".scroll-hint");
@@ -129,6 +151,10 @@
   }
 
   var SPEED = 1.1;
+  /* where the first scroll lands: the globe screen on phones, the About section on laptops */
+  function landing() {
+    return isPhone() || !about ? window.innerHeight * 0.9 / SPEED : about.offsetTop;
+  }
 
   /* the globe faces Mexico and the US while it rises, and only starts spinning once it has arrived;
      out of sight it is turned back to that view, so it never jumps while on screen */
@@ -156,7 +182,7 @@
   }
   function appear() {
     var shown = clamp(window.scrollY * SPEED / (window.innerHeight * 0.9));
-    if (shown < 0.02 || calm) { globeIn = 1; render(cur); return; }
+    if (shown < 0.02 || calm || !isPhone()) { globeIn = 1; render(cur); return; }
     var t0 = null, RISE = 1100;
     function step(now) {
       if (t0 === null) { t0 = now; }
@@ -172,6 +198,7 @@
   var HOME = "50deg 74deg auto", globeState = "";
   function settleGlobe(e) {
     if (!map.jumpCameraToGoal) { return; }          /* model-viewer has not loaded yet */
+    if (!isPhone()) { e = 1; }                       /* laptops: it just spins beside the About card */
     var state = e >= 0.999 ? "spin" : (e <= 0.001 ? "home" : "hold");
     if (state === globeState) { return; }
     globeState = state;
@@ -204,19 +231,21 @@
 
     var p = clamp(y * SPEED / (vh * 0.9));
     var e = ease(p);
+    /* laptops: the name and photo stay as they are and scroll away; only the colours change */
+    var pm = isPhone() ? p : 0;
 
     /* the picture leads; the text waits, slides right clear of it, then rises */
-    var pp = ease(clamp(p / 0.75));
-    var tx_ = ease(clamp((p - 0.2) / 0.6));
-    var ty_ = ease(clamp((p - 0.35) / 0.65));
-    var ts = ease(clamp((p - 0.15) / 0.85));
+    var pp = ease(clamp(pm / 0.75));
+    var tx_ = ease(clamp((pm - 0.2) / 0.6));
+    var ty_ = ease(clamp((pm - 0.35) / 0.65));
+    var ts = ease(clamp((pm - 0.15) / 0.85));
 
     put(pic, -s0 * m.pw / 2, gTop, left, top1, pp, pp, pp, s0, s1);
     put(nm,  -s0 * m.nw / 2, gTop + s0 * nY, tx, ty, tx_, ty_, ts, s0, s1);
     put(rl,  -s0 * m.rw / 2, gTop + s0 * rY, tx, ty + s1 * (m.nh + 6), tx_, ty_, ts, s0, s1);
     put(em,  -s0 * m.ew / 2, gTop + s0 * eY, tx, ty + s1 * (m.nh + 6 + m.rh + 6), tx_, ty_, ts, s0, s1);
 
-    var fade = 1 - clamp(p / 0.3);
+    var fade = 1 - clamp(pm / 0.3);
     em.style.opacity = fade;
     em.style.visibility = fade <= 0 ? "hidden" : "visible";
 
@@ -228,6 +257,10 @@
     var gp = Math.min(p, globeIn), ge = ease(gp);
     if (warming) {                       /* in place and drawn, but not visible yet */
       map.style.opacity = "0.01"; map.style.transform = "none"; map.style.pointerEvents = "none";
+    } else if (!isPhone()) {             /* laptops: beside the About card, fades in once loaded */
+      map.style.pointerEvents = "";
+      map.style.opacity = globeIn > 0 ? "1" : "0";
+      map.style.transform = "none";
     } else {
       map.style.pointerEvents = "";
       map.style.opacity = clamp(gp * 4);
@@ -240,7 +273,7 @@
       el.style.transform = "translate3d(" + ((1 - e) * away) + "px,0,0)";
       el.style.visibility = e <= 0.001 ? "hidden" : "visible";
     }
-    slideIn(sq, 0.45);
+    if (sq) { slideIn(sq, 0.45); }
     if (hint) {   /* centred between the bottom of the email (intro layout) and the bottom of the screen */
       var emailBottom = gTop + s0 * H0, hh = hint.offsetHeight || 34;
       hint.style.top = ((emailBottom + vh) / 2 - hh / 2) + "px";
@@ -307,7 +340,7 @@
     var dir = y > lastY ? 1 : -1;
     lastY = y;
     var vh = window.innerHeight;
-    var pts = [0, vh * 0.9 / SPEED];
+    var pts = [0, landing()];
     if (y >= pts[pts.length - 1] - 1) { return; }
     var lo = 0;
     for (var i = 0; i < pts.length - 1; i++) { if (y >= pts[i]) { lo = i; } }
@@ -325,7 +358,7 @@
   window.addEventListener("wheel", block, { passive: false });
   window.addEventListener("touchmove", block, { passive: false });
 
-  function refresh() { measure(); cur = target = window.scrollY; render(cur); }
+  function refresh() { placeGlobe(); measure(); cur = target = window.scrollY; render(cur); }
   window.addEventListener("resize", refresh);
   window.addEventListener("load", refresh);
   if (document.fonts && document.fonts.ready) { document.fonts.ready.then(refresh); }
@@ -335,12 +368,12 @@
   var toIndex = location.hash === "#index", userMoved = false;
   function jumpToIndex() {
     if (!toIndex || userMoved) { return; }
-    var landing = window.innerHeight * 0.9 / SPEED;
-    if (Math.abs(window.scrollY - landing) < 2) { return; }
+    var land = landing();
+    if (Math.abs(window.scrollY - land) < 2) { return; }
     /* "instant" is not accepted by every Safari, so switch off smooth scrolling for this one jump */
     var html = document.documentElement, before = html.style.scrollBehavior;
     html.style.scrollBehavior = "auto";
-    window.scrollTo(0, landing);
+    window.scrollTo(0, land);
     html.style.scrollBehavior = before;
     lastY = window.scrollY;
     refresh();
@@ -427,62 +460,14 @@
   window.addEventListener("pointercancel", release);
 })();
 
-/* small Claude Code window, on a loop: types "pls fix.", sends it, thinks for about four seconds, clears */
-(function () {
-  var box = document.querySelector(".cc");
-  if (!box) { return; }
-  var typed = box.querySelector(".cc-typed");
-  var spark = box.querySelector(".cc-spark");
-  var TEXT = "pls fix.";
-  var GLYPHS = ["\u00b7", "\u2722", "\u2733", "\u2736", "\u273b", "\u273d", "\u273b", "\u2736", "\u2733", "\u2722"];
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    box.classList.add("is-sent", "is-thinking");            /* still frame: message sent, Claude thinking */
-    return;
-  }
-  var timers = [], sparkTimer = 0, running = false;
-  function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
-  function set(name, on) { box.classList.toggle(name, on); }
-  function spin(on) {
-    clearInterval(sparkTimer);
-    if (on) { var k = 0; sparkTimer = setInterval(function () { spark.textContent = GLYPHS[k++ % GLYPHS.length]; }, 120); }
-  }
-  function cycle() {
-    typed.textContent = ""; set("is-sent", false); set("is-thinking", false);
-    var t = 700;
-    later(t, function () { set("is-typing", true); });
-    for (var i = 1; i <= TEXT.length; i++) {
-      (function (n) { later(t + 120 + n * 120, function () { typed.textContent = TEXT.slice(0, n); }); })(i);
-    }
-    t += 120 + TEXT.length * 120 + 500;
-    later(t, function () { typed.textContent = ""; set("is-typing", false); set("is-sent", true); });   /* send */
-    later(t + 300, function () { set("is-thinking", true); spin(true); });
-    t += 300 + 4000;                                                     /* think about four seconds */
-    later(t, function () { spin(false); set("is-thinking", false); set("is-sent", false); });       /* fade out */
-    later(t + 600, cycle);
-  }
-  function start() { if (!running) { running = true; cycle(); } }
-  function stop() { running = false; spin(false); timers.forEach(clearTimeout); timers = []; }
-  var onScreen = true;
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      onScreen = entries[0].isIntersecting;
-      if (onScreen && !document.hidden) { start(); } else { stop(); }
-    }).observe(box);
-  }
-  document.addEventListener("visibilitychange", function () { if (document.hidden) { stop(); } else if (onScreen) { start(); } });
-  start();
-})();
-
-/* stickman ragdoll (a 2D take on the stickman by LDev) with Gerardo's face. On the index view one
-   hand grabs the cursor and the body hangs from it under gravity; over the Claude Code window, or
-   away from the index view, he lets go and hangs from the window's top-left corner instead.
+/* stickman ragdoll (a 2D take on the stickman by LDev) with Gerardo's face. While the cursor is on
+   the globe, one hand grabs it and the body hangs from it under gravity; off the globe he fades out.
    Verlet physics: each joint is a point, each bone a fixed length, and a few "no closer than"
    rules keep elbows, knees and the neck from folding the wrong way. */
 (function () {
   var canvas = document.querySelector(".ragdoll");
-  var pin = document.querySelector(".showcase .pin");
-  var win = document.querySelector(".cc");                  /* he grabs / rests on the small Claude Code window */
-  if (!canvas || !pin || !win || !canvas.getContext) { return; }
+  var globe = document.querySelector("model-viewer.map");
+  if (!canvas || !globe || !canvas.getContext) { return; }
   if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) { return; }
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
 
@@ -565,7 +550,7 @@
   var dpr = 1, W = 0, H = 0;
   function resize() {
     dpr = Math.min(2, window.devicePixelRatio || 1);
-    W = pin.clientWidth; H = pin.clientHeight;
+    W = window.innerWidth; H = window.innerHeight;          /* the canvas covers the screen */
     canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
     build();
   }
@@ -624,51 +609,20 @@
   }
 
   /* ---------- where the hand goes ---------- */
-  var mouse = { x: 0, y: 0, px: 0, py: 0, in: false };   /* px/py: last position outside the window */
-  var grip = null, wasOver = false;   /* grip: spot on the window's edge he grabbed, as fractions of its size */
+  var mouse = { x: 0, y: 0, in: false };
 
-  function onIndex() {
-    var g = parseFloat(document.documentElement.style.getPropertyValue("--glow")) || 0;
-    var r = pin.getBoundingClientRect();
-    return g > 0.98 && r.top > -2 && r.top < 2;                   /* opening finished, still pinned */
-  }
-
-  function restPoint() {
-    var w = win.getBoundingClientRect(), p = pin.getBoundingClientRect();
-    if (grip) { return { x: w.left + grip.x * w.width - p.left, y: w.top + grip.y * w.height - p.top }; }
-    return { x: w.left - p.left - 14 * S, y: w.top - p.top + 6 };   /* before any grab: beside the top-left corner */
-  }
-
-  /* where the cursor's path from (ax, ay) to (bx, by) crossed the window's border */
-  function entryPoint(w, ax, ay, bx, by) {
-    var t0 = 0, t1 = 1, dx = bx - ax, dy = by - ay;
-    var edges = [[-dx, ax - w.left], [dx, w.right - ax], [-dy, ay - w.top], [dy, w.bottom - ay]];
-    for (var i = 0; i < 4; i++) {
-      var pp = edges[i][0], q = edges[i][1];
-      if (pp === 0) { if (q < 0) { t0 = 2; } continue; }
-      var r = q / pp;
-      if (pp < 0) { t0 = Math.max(t0, r); } else { t1 = Math.min(t1, r); }
-    }
-    if (t0 <= t1 && t0 <= 1) { return { x: ax + t0 * dx, y: ay + t0 * dy }; }
-    /* no clean crossing (e.g. the page scrolled under the cursor): snap to the nearest edge */
-    var d = [bx - w.left, w.right - bx, by - w.top, w.bottom - by], m = Math.min.apply(null, d);
-    if (m === d[0]) { return { x: w.left, y: by }; }
-    if (m === d[1]) { return { x: w.right, y: by }; }
-    if (m === d[2]) { return { x: bx, y: w.top }; }
-    return { x: bx, y: w.bottom };
+  /* on the globe: inside the drawn sphere (a circle in the middle of the element), not its square box */
+  function onGlobe() {
+    if (!mouse.in || globe.style.opacity === "0" || globe.style.opacity === "0.01") { return false; }
+    var r = globe.getBoundingClientRect();
+    if (!r.width) { return false; }
+    var dx = mouse.x - (r.left + r.width / 2), dy = mouse.y - (r.top + r.height / 2), R = r.width * 0.44;
+    return dx * dx + dy * dy < R * R;
   }
 
   function chooseTarget() {
-    var p = pin.getBoundingClientRect(), w = win.getBoundingClientRect();
-    var overWindow = mouse.in && mouse.x > w.left && mouse.x < w.right && mouse.y > w.top && mouse.y < w.bottom;
-    if (overWindow && !wasOver) {                                /* just crossed in: grab the edge right there */
-      var e = entryPoint(w, mouse.px, mouse.py, mouse.x, mouse.y);
-      grip = { x: Math.max(0, Math.min(1, (e.x - w.left) / w.width)), y: Math.max(0, Math.min(1, (e.y - w.top) / w.height)) };
-    }
-    wasOver = overWindow;
-    holding = mouse.in && !overWindow && mouse.y > p.top && mouse.y < p.bottom;
-    if (holding) { target.x = mouse.x - p.left; target.y = mouse.y - p.top; }
-    else { var r = restPoint(); target.x = r.x; target.y = r.y; }
+    holding = true;
+    target.x = mouse.x; target.y = mouse.y;
   }
 
   /* ---------- loop: runs only while he's on screen and still moving ---------- */
@@ -677,12 +631,11 @@
   var dive = null, diveScale = 1, DIVE_MS = 450;
 
   function frame(now) {
-    var visible = onIndex() && !document.hidden;
+    var visible = (onGlobe() || !!dive) && !document.hidden;
     if (visible !== shown) { shown = visible; canvas.classList.toggle("is-on", visible); }
     if (!visible) {
-      running = false;
-      /* while the opening is on screen, look again shortly (cheap) so he appears as soon as it finishes */
-      if (!document.hidden && pin.getBoundingClientRect().bottom > 0) { setTimeout(wake, 400); }
+      running = false; last = 0;
+      started = false;                                           /* next time he appears right at the cursor */
       return;
     }
 
@@ -695,7 +648,7 @@
     if (!started) { anchor.x = target.x; anchor.y = target.y; pose(anchor.x, anchor.y); started = true; }
 
     /* the hand reaches the cursor quickly but not instantly, so switching grips swings him */
-    var k = dive ? 0.35 : (holding || grip) ? 0.3 : 0.12;
+    var k = dive ? 0.35 : 0.3;
     anchor.x += (target.x - anchor.x) * k; anchor.y += (target.y - anchor.y) * k;
     if (Math.abs(target.x - anchor.x) < 0.3 && Math.abs(target.y - anchor.y) < 0.3) { anchor.x = target.x; anchor.y = target.y; }
 
@@ -725,8 +678,6 @@
   window.addEventListener("pointermove", function (ev) {
     if (ev.pointerType && ev.pointerType !== "mouse") { return; }
     mouse.x = ev.clientX; mouse.y = ev.clientY; mouse.in = true;
-    var w = win.getBoundingClientRect();                       /* remember the last spot outside the window */
-    if (!(mouse.x > w.left && mouse.x < w.right && mouse.y > w.top && mouse.y < w.bottom)) { mouse.px = mouse.x; mouse.py = mouse.y; }
     wake();
   }, { passive: true });
   document.documentElement.addEventListener("pointerleave", function () { mouse.in = false; wake(); });
@@ -736,16 +687,13 @@
   document.addEventListener("visibilitychange", wake);
   face.onload = wake;
   window.addEventListener("stickman-dive", function (ev) {
-    var p = pin.getBoundingClientRect();
-    dive = { x: ev.detail.x - p.left, y: ev.detail.y - p.top, t0: performance.now() };
+    dive = { x: ev.detail.x, y: ev.detail.y, t0: performance.now() };
     wake();
   });
   /* back from the location page (page restored from history): bring him back */
   window.addEventListener("pageshow", function () { dive = null; diveScale = 1; started = false; wake(); });
 
   resize();
-  /* the opening may already be finished on load (coming back to #index) */
-  setTimeout(wake, 300);
 })();
 
 /* location pins on the globe: open their page half a second after the click, so the pin's hop shows */
