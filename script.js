@@ -98,6 +98,7 @@
   var map = pin.querySelector(".map");
   var sq = pin.querySelector(".grey-square");
   var card = pin.querySelector(".contact-card");
+  var hint = pin.querySelector(".scroll-hint");
   var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   var cols = {
@@ -240,6 +241,11 @@
       el.style.visibility = e <= 0.001 ? "hidden" : "visible";
     }
     slideIn(sq, 0.45);
+    if (hint) {   /* centred between the bottom of the email (intro layout) and the bottom of the screen */
+      var emailBottom = gTop + s0 * H0, hh = hint.offsetHeight || 34;
+      hint.style.top = ((emailBottom + vh) / 2 - hh / 2) + "px";
+    }
+    if (hint) { var hv = Math.max(0, 1 - p * 5); hint.style.opacity = (0.85 * hv).toFixed(3); hint.style.visibility = hv > 0 ? "visible" : "hidden"; }
     if (card) { slideIn(card, 0.6); }
     settleGlobe(e);
   }

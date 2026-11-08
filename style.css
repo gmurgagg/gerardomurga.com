@@ -694,6 +694,15 @@
   /* not enough height for window + buttons + resume above the contact card: the buttons win */
   @media (max-height: 739px) { .cc.cc-small { display: none; } }
 
+  /* ---------- scroll hint on the intro ---------- */
+  .scroll-hint {
+    position: absolute; z-index: 3; left: 50%; top: 88vh; width: 30px; height: auto;   /* top is set by script.js */
+    margin-left: -15px; pointer-events: none; opacity: 0.85;
+    animation: hint-bob 1.8s ease-in-out infinite;
+  }
+  @keyframes hint-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+  @media (prefers-reduced-motion: reduce) { .scroll-hint { animation: none; } }
+
   /* ---------- three big section buttons ---------- */
   .quick-links { width: 100%; display: flex; flex-direction: column; gap: clamp(12px, 1.8vh, 16px); }
   .quick-link {
