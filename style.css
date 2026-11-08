@@ -550,6 +550,19 @@
   .doc a { color: #f0a585; font-weight: 600; text-decoration: underline; text-decoration-color: rgba(240, 165, 133, 0.5); text-underline-offset: 3px; }
   .doc a:hover { color: #ffc4aa; text-decoration-color: currentColor; }
   .doc-divider { border: 0; border-top: 1px solid #26262c; margin: 52px 0 46px; }
+
+  /* the write-up inside one card with a soft light around it, like the About page */
+  .doc.doc-card {
+    position: relative; box-sizing: border-box; padding: 40px 44px 36px; border-radius: 18px;
+    background: linear-gradient(180deg, #1f1f22, #19191b); border: 1px solid #3a3a3e;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 64px 6px rgba(240, 165, 133, 0.1), 0 30px 60px -26px rgba(0, 0, 0, 0.85);
+  }
+  .doc.doc-card::before {                                  /* soft warm light behind the card */
+    content: ""; position: absolute; inset: -60px -8%; z-index: -1; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(240, 165, 133, 0.12), transparent);
+  }
+  .doc.doc-card .doc-divider { border-top-color: #2c2c30; margin: 40px 0 36px; }
+  @media (max-width: 640px) { .doc.doc-card { padding: 26px 20px 24px; } }
   .doc .eyebrow + h3 { margin-top: 4px; }                    /* section label sits right on its first heading */
 
   /* the home page's contact card, placed in the page flow (project pages) instead of pinned to a corner */
@@ -700,6 +713,65 @@
   }
   @media (prefers-reduced-motion: reduce) { .work.work-static { transition: filter 0.3s ease; } .work.work-static:hover { transform: none; } }
 
+  /* ---------- About page: one static card in the middle, text only ---------- */
+  .about-wrap { position: relative; max-width: 960px; }
+  .about-wrap::before {                                    /* soft warm light behind the card */
+    content: ""; position: absolute; inset: -50px -8% -30px; z-index: -1; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(240, 165, 133, 0.14), transparent);
+  }
+  .about-card {
+    box-sizing: border-box; padding: 34px 40px 30px; border-radius: 18px;
+    background: linear-gradient(180deg, #1f1f22, #19191b); border: 1px solid #3a3a3e; color: #ececec;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 64px 6px rgba(240, 165, 133, 0.1), 0 30px 60px -26px rgba(0, 0, 0, 0.85);
+  }
+  .about-card strong { color: #f0a585; font-weight: 600; font-size: calc(1em + 1pt); }   /* the four key highlights, one point larger */
+  .about-intro { margin-bottom: 18px; }
+  .about-hello { margin: 0 0 6px; font: 700 2.1rem/1.15 "Jost", "Futura", system-ui, sans-serif; color: #f6efe2; letter-spacing: -0.01em; }
+  .about-degree { margin: 0; font-size: 1.12rem; color: #d6d2ca; }
+  .about-lede { margin: 0 0 18px; padding-bottom: 18px; border-bottom: 1px solid #2c2c30; font-size: 1.14rem; line-height: 1.65; color: #ece8e1; }
+  .about-list { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 14px; }
+  .about-list li { position: relative; padding-left: 22px; font-size: 1.06rem; line-height: 1.6; color: #ece8e1; }
+  .about-list li::before {                                 /* a small orange dot instead of icons */
+    content: ""; position: absolute; left: 2px; top: 0.62em; width: 7px; height: 7px; border-radius: 50%; background: #f0a585;
+  }
+  .about-chips { display: grid; gap: 10px; padding-top: 18px; border-top: 1px solid #2c2c30; }
+  .chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .chip-label { width: 96px; color: var(--gold); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+  .chip {
+    padding: 6px 14px; border-radius: 999px; background: #26262a; border: 1px solid #3a3a3e;
+    color: #f6efe2; font-size: 0.95rem; font-weight: 500;
+  }
+  .chip em { font-style: normal; color: #9c9ca6; font-size: 0.84rem; margin-left: 4px; }
+
+  @media (max-height: 920px) and (min-width: 721px) {   /* most laptops: slightly tighter so it stays on one screen */
+    .about-card { padding: 26px 34px 22px; }
+    .about-hello { font-size: 1.85rem; }
+    .about-degree { font-size: 1.04rem; }
+    .about-lede { font-size: 1.04rem; line-height: 1.55; margin-bottom: 14px; padding-bottom: 14px; }
+    .about-list { gap: 10px; margin-bottom: 16px; }
+    .about-list li { font-size: 0.99rem; line-height: 1.5; }
+    .about-chips { padding-top: 14px; gap: 8px; }
+    .chip { padding: 4px 12px; font-size: 0.9rem; }
+  }
+  @media (max-height: 780px) and (min-width: 721px) {   /* short laptops (1366x768, 1280x720) */
+    .about-card { padding: 20px 30px 18px; }
+    .about-intro { margin-bottom: 12px; }
+    .about-hello { font-size: 1.6rem; }
+    .about-degree { font-size: 0.98rem; }
+    .about-lede { font-size: 0.98rem; margin-bottom: 11px; padding-bottom: 11px; }
+    .about-list { gap: 7px; margin-bottom: 11px; }
+    .about-list li { font-size: 0.94rem; line-height: 1.45; }
+    .about-chips { padding-top: 11px; gap: 6px; }
+    .chip { padding: 3px 11px; font-size: 0.86rem; }
+  }
+  @media (max-width: 720px) {
+    .about-card { padding: 24px 20px; }
+    .about-hello { font-size: 1.6rem; }
+    .about-lede { font-size: 1.04rem; }
+    .about-list li { font-size: 1rem; }
+    .chip-label { width: 100%; }
+  }
+
   /* ---------- Projects + Other pages: cards centred on the screen ----------
      The page is a 3-row grid: top (bar + heading) | cards | bottom (controls + contact). The top and bottom
      rows share the leftover height equally, so the cards sit in the middle of the screen. */
@@ -738,6 +810,7 @@
   .page-projects .contact-card--inline .contact-card-text { font-size: 0.78rem; }
   .page-projects .contact-card--inline .contact-card-actions { flex-direction: row; gap: 8px; }
   .page-projects .contact-card--inline .contact-card-email { flex: 1 1 auto; padding: 7px 10px; }
+  .page-projects .contact-card--inline .contact-card-email span { white-space: nowrap; flex: none; }   /* email on one line */
   .page-projects .contact-card--inline .contact-card-links { flex: none; display: flex; gap: 8px; }
   .page-projects .contact-card--inline .contact-card-links a { padding: 7px 12px; }
   .page-projects footer { padding: 8px 0 10px; }
@@ -748,6 +821,9 @@
   }
   @media (max-width: 720px) {
     .page-projects .contact-card--inline { grid-template-columns: 1fr; }
+    .page-projects .contact-card--inline .contact-card-actions { flex-wrap: wrap; }
+    .page-projects .contact-card--inline .contact-card-email { flex: 1 1 100%; justify-content: center; }   /* email gets its own row */
+    .page-projects .contact-card--inline .contact-card-links { flex: 1 1 100%; display: grid; grid-template-columns: 1fr 1fr; }
   }
 
   /* placeholders still to fill in: easy to spot so they don't go live by accident */
