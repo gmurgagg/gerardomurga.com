@@ -1416,3 +1416,10 @@
     .contact-btn:not(.contact-btn--email) { padding: 8px 4px; font-size: 0.8rem; }
     .contact-btn:not(.contact-btn--email) span[aria-hidden] { display: none; }
   }
+
+  /* project cards: the role, highlighted as a small gold badge */
+  .work-role {
+    display: inline-block; padding: 2px 9px; margin-right: 2px; border-radius: 999px;
+    background: rgba(241, 181, 58, 0.16); border: 1px solid rgba(241, 181, 58, 0.55);
+    color: #f1b53a; font-weight: 700; font-size: 0.95em; letter-spacing: 0.02em;
+  }
