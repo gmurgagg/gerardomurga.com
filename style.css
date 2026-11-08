@@ -644,6 +644,70 @@
     will-change: transform;
   }
 
+  /* ---------- tiny Claude Code input (types "pls fix." on a loop) ---------- */
+  .cc-mini {
+    width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px 9px 13px; border-radius: 12px;
+    background: #1c1c1c; border: 1px solid #3c3c3c; color: #ececec;
+    font: 400 0.9rem/1.2 "Inter", system-ui, sans-serif;
+    box-shadow: 0 0 30px 1px rgba(255, 255, 255, calc(0.08 * var(--glow, 0)));
+  }
+  .cc-mini svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .cc-mini > svg { color: #9b9b9b; }
+  .cc-mini-field { flex: 1; min-width: 0; display: flex; align-items: center; white-space: nowrap; overflow: hidden; }
+  .cc-mini-ph { color: #6f6f6f; overflow: hidden; text-overflow: ellipsis; }
+  .cc-mini-caret { width: 1px; height: 1.05em; background: #ececec; margin-left: 1px; opacity: 0; }
+  .cc-mini.is-typing .cc-mini-ph { display: none; }
+  .cc-mini.is-typing .cc-mini-caret { opacity: 1; animation: cc-blink 1s steps(1) infinite; }
+  .cc-mini-send {
+    width: 26px; height: 26px; flex: none; border-radius: 50%; display: grid; place-items: center;
+    background: #333; color: #8a8a8a; transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .cc-mini.has-text .cc-mini-send { background: #d97757; color: #1c1c1c; }
+  /* after "sending": the field shows Claude thinking (cycling spark + shimmering text) */
+  .cc-mini-think { display: none; align-items: center; gap: 7px; }
+  .cc-mini-spark { color: #d97757; width: 1em; text-align: center; }
+  .cc-mini-think-text {
+    background: linear-gradient(90deg, #8a8a8a 0%, #8a8a8a 40%, #ececec 50%, #8a8a8a 60%, #8a8a8a 100%);
+    background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: cc-shimmer 1.6s linear infinite;
+  }
+  .cc-mini.is-thinking .cc-mini-think { display: flex; }
+  .cc-mini.is-thinking .cc-mini-ph, .cc-mini.is-thinking .cc-mini-typed, .cc-mini.is-thinking .cc-mini-caret { display: none; }
+
+  /* ---------- three big section buttons ---------- */
+  .quick-links { width: 100%; display: flex; flex-direction: column; gap: clamp(12px, 1.8vh, 16px); }
+  .quick-link {
+    position: relative; display: flex; align-items: center; gap: 16px;
+    padding: clamp(11px, 1.7vh, 16px) 18px; border-radius: 14px; text-decoration: none;
+    background: linear-gradient(180deg, #202022, #1a1a1c); border: 1px solid #3a3a3e; color: #ececec;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, calc(0.04 * var(--glow, 0))),
+      0 0 32px 1px rgba(255, 255, 255, calc(0.09 * var(--glow, 0))),
+      0 16px 34px -22px rgba(0, 0, 0, 0.7);
+    transform: scale(1); transform-origin: 50% 50%;
+    transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    will-change: transform;
+  }
+  .quick-link:hover, .quick-link:focus-visible {
+    transform: scale(1.035); z-index: 2;
+    border-color: #f0a585; background: linear-gradient(180deg, #252427, #1d1c1e);
+    box-shadow: 0 0 0 1px rgba(240, 165, 133, 0.35), 0 0 40px 2px rgba(240, 165, 133, 0.18), 0 20px 40px -22px rgba(0, 0, 0, 0.8);
+  }
+  .quick-link:focus-visible { outline: none; }
+  .ql-icon {
+    width: clamp(36px, 5vh, 44px); height: clamp(36px, 5vh, 44px); flex: none; border-radius: 11px;
+    display: grid; place-items: center; background: rgba(240, 165, 133, 0.12); color: #f0a585;
+    transition: background-color 0.25s ease;
+  }
+  .ql-icon svg { width: 55%; height: 55%; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .quick-link:hover .ql-icon { background: rgba(240, 165, 133, 0.22); }
+  .ql-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .ql-title { font: 700 clamp(1rem, 2.2vh, 1.2rem)/1.15 "Jost", "Futura", system-ui, sans-serif; color: #f6efe2; }
+  .ql-sub { font: 400 0.84rem/1.3 "Inter", system-ui, sans-serif; color: #a6a39c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ql-arrow { flex: none; font-size: 1.2rem; color: #8a8a8a; transition: transform 0.25s ease, color 0.25s ease; }
+  .quick-link:hover .ql-arrow, .quick-link:focus-visible .ql-arrow { transform: translateX(4px); color: #f0a585; }
+
   /* ---------- app-window mockup (replaces the grey square's fill) ---------- */
 
   /* holds the window and the resume button so they slide in together */
@@ -825,8 +889,9 @@
   .pin {
     /* app window + resume button, centred as one group in the middle of the screen. The window
        height is capped so the group never starts above 200px, where the name and tagline end. */
-    --cc-h: min(52vh, 460px, calc(100vh - 460px));
-    --cc-top: calc((100vh - var(--cc-h) - 60px) / 2);                     /* 60px = 16px gap + 44px resume button */
+    /* the right column (mini input, three buttons, resume) is centred vertically as one group, using its
+       real height measured by script.js (--wrap-h); it never starts above 196px, where the name ends */
+    --cc-top: max(196px, calc((100vh - var(--wrap-h, 420px)) / 2));
     --cc-w: min(38vw, 600px);
     /* globe: fills the space left of the window, kept below the portrait (which ends at 231px) */
     --g-top: 240px;
@@ -946,6 +1011,14 @@
     .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 1vw; }
     /* phones: just the sidebar with the project links */
     .cc-wrap { width: min(86vw, 420px); height: auto; left: 0; right: 0; margin-inline: auto; bottom: calc(2vh + var(--card-h, 84px) + 12px); gap: 10px; }
+    /* phones: compact section buttons (icon + title only) so the globe keeps its room */
+    .cc-mini { padding: 6px 8px 6px 11px; font-size: 0.8rem; }
+    .cc-mini-send { width: 22px; height: 22px; }
+    .quick-links { gap: 8px; }
+    .quick-link { padding: 8px 14px; gap: 12px; border-radius: 12px; }
+    .ql-icon { width: 30px; height: 30px; border-radius: 9px; }
+    .ql-title { font-size: 1rem; }
+    .ql-sub { display: none; }
     .cc { height: auto; grid-template-columns: 1fr; border-radius: 12px; container-type: normal; }
     .resume-btn { width: 90%; padding: 10px 14px; font-size: 0.92rem; }
     .cc-main, .cc-menu, .cc-user { display: none; }
@@ -970,6 +1043,9 @@
     .cc-item { padding: 0.16em 0.6em; }
     .cc-group { margin-top: 0.3em; }
     .cc-wrap { gap: 7px; }
+    .quick-links { gap: 6px; }
+    .quick-link { padding: 6px 12px; }
+    .ql-icon { width: 26px; height: 26px; }
     .resume-btn { padding: 7px 14px; font-size: 0.86rem; }
   }
 
@@ -978,5 +1054,6 @@
     .pin { --ph-top: 160px; --ph-g: max(90px, min(80vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 28px))); }
     .cc-top { display: none; }
     .cc-side { font-size: 10px; padding-top: 0.35em; }
+    .cc-mini { display: none; }                               /* the decorative input goes first on the tiniest screens */
     .cc-item { padding: 0.1em 0.6em; }
   }

@@ -496,7 +496,7 @@
 (function () {
   var canvas = document.querySelector(".ragdoll");
   var pin = document.querySelector(".showcase .pin");
-  var win = document.querySelector(".cc");
+  var win = document.querySelector(".cc-mini");             /* he grabs / rests on the tiny Claude Code input */
   if (!canvas || !pin || !win || !canvas.getContext) { return; }
   if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) { return; }
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
@@ -798,4 +798,48 @@
   window.addEventListener("resize", sync);
   window.addEventListener("load", sync);
   if (document.fonts && document.fonts.ready) { document.fonts.ready.then(sync); }
+})();
+
+/* tiny Claude Code input, on a loop: types "pls fix.", sends it, thinks for a few seconds, clears, repeats */
+(function () {
+  var box = document.querySelector(".cc-mini");
+  if (!box) { return; }
+  var typed = box.querySelector(".cc-mini-typed");
+  var spark = box.querySelector(".cc-mini-spark");
+  var TEXT = "pls fix.";
+  var GLYPHS = ["\u00b7", "\u2722", "\u2733", "\u2736", "\u273b", "\u273d", "\u273b", "\u2736", "\u2733", "\u2722"];
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    box.classList.add("is-thinking");                       /* still frame: Claude thinking */
+    return;
+  }
+  var timers = [], sparkTimer = 0, running = false;
+  function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function spin(on) {
+    clearInterval(sparkTimer);
+    if (on) { var k = 0; sparkTimer = setInterval(function () { spark.textContent = GLYPHS[k++ % GLYPHS.length]; }, 120); }
+  }
+  function cycle() {
+    typed.textContent = ""; box.classList.remove("has-text", "is-thinking"); box.classList.add("is-typing");
+    for (var i = 1; i <= TEXT.length; i++) {
+      (function (n) { later(500 + n * 120, function () { typed.textContent = TEXT.slice(0, n); box.classList.add("has-text"); }); })(i);
+    }
+    var t = 500 + TEXT.length * 120 + 600;                  /* short pause, then send */
+    later(t, function () {
+      typed.textContent = ""; box.classList.remove("is-typing", "has-text"); box.classList.add("is-thinking"); spin(true);
+    });
+    t += 3500;                                              /* think for about three and a half seconds */
+    later(t, function () { spin(false); box.classList.remove("is-thinking"); });
+    later(t + 800, cycle);                                  /* empty input for a moment, then again */
+  }
+  function start() { if (!running) { running = true; cycle(); } }
+  function stop() { running = false; spin(false); timers.forEach(clearTimeout); timers = []; }
+  var onScreen = true;
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      onScreen = entries[0].isIntersecting;
+      if (onScreen && !document.hidden) { start(); } else { stop(); }
+    }).observe(box);
+  }
+  document.addEventListener("visibilitychange", function () { if (document.hidden) { stop(); } else if (onScreen) { start(); } });
+  start();
 })();
