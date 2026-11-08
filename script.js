@@ -813,6 +813,7 @@
     dots.forEach(function (dt, k) { dt.classList.toggle("is-on", k === current); dt.setAttribute("aria-selected", k === current); });
     if (num) { num.textContent = (current < 9 ? "0" : "") + (current + 1); }
     if (name) { name.textContent = cards[current].querySelector(".work-title").textContent; }
+    try { sessionStorage.setItem("works-current", String(current)); } catch (e) { /* storage blocked */ }
   }
 
   cards.forEach(function (c, k) {
@@ -833,5 +834,9 @@
     var dx = ev.clientX - x0; x0 = null;
     if (Math.abs(dx) > 40) { show(current + (dx < 0 ? 1 : -1)); }
   });
-  show(0);
+  /* coming back from another page (Back, top links, browser back): keep the project that was in front.
+     Remembered for this browser tab only, so a fresh visit still starts on the first card */
+  var saved = 0;
+  try { saved = parseInt(sessionStorage.getItem("works-current"), 10) || 0; } catch (e) { saved = 0; }
+  show(saved >= 0 && saved < n ? saved : 0);
 })();

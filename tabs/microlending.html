@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>When does microlending become a debt trap? — Gerardo Murga</title>
-<meta name="description" content="An interactive probability model, built for Stanford CS109, of how microlending interest rates can push borrowers into a cycle of debt.">
+<title>Microlending simulator — Gerardo Murga</title>
+<meta name="description" content="An interactive probability model, built for Stanford CS109, of alternative credit scoring and the thin line where high interest rates could push borrowers into a cycle of debt.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=46">
+<link rel="stylesheet" href="../style.css?v=47">
 <script>document.documentElement.classList.add("has-js");</script>
 </head>
 <body class="doc-dark">
@@ -51,8 +51,8 @@
   </div>
   <div class="wrap">
     <p class="page-kicker">Projects</p>
-    <h1 class="page-title">When does microlending become a debt trap?</h1>
-    <p class="page-lede">An interactive model of how interest rates can push microlending borrowers into a cycle of debt.</p>
+    <h1 class="page-title">Microlending simulator</h1>
+    <p class="page-lede">An interactive model of alternative credit scoring, and the thin line where high interest rates could push borrowers into a cycle of debt.</p>
   </div>
 </header>
 
@@ -67,12 +67,12 @@
     <a class="doc-shot" href="https://microlending-rates-cs109.streamlit.app/" target="_blank" rel="noopener" aria-label="Open the site">
       <img src="../assets/projects/microlending.png" alt="Title screen of the Impact of Microlending Interest Rates app">
     </a>
-    <p>For <strong>CS109</strong>, Stanford&rsquo;s probability course for computer scientists, I built an <strong>interactive educational toy model</strong> that shows how <strong>high or low interest rates affect financially vulnerable borrowers</strong>, so that students and citizens can understand what microlending is and how damaging high rates can be.</p>
-    <p>For the full argument on why Latin American microlenders charge such high rates, and what could change that, see my paper on the <a href="papers.html">research papers page</a>.</p>
+    <p>For <strong>CS109</strong>, Stanford&rsquo;s probability course for computer scientists, I built an <strong>interactive educational toy model</strong> that shows how <strong>high or low interest rates affect financially vulnerable borrowers</strong>, so that students and citizens can understand what microlending is and its tradeoffs.</p>
+    <p>Microlending&rsquo;s overall impact is <strong>slightly positive</strong>, with about <strong>4.5% higher revenues and profits</strong> for small firms in one Brazilian study, but its <strong>implementation is delicate</strong>: at a high enough rate, a helpful loan can become a debt cycle.</p>
+    <p>For the full argument on why rates in some Latin American microlending can get very high, and what could change that, see my paper on the <a href="papers.html">research papers page</a>.</p>
     <p class="doc-actions">
       <a class="work-cta" href="https://microlending-rates-cs109.streamlit.app/" target="_blank" rel="noopener">Open the site <span aria-hidden="true">&#8599;</span></a>
       <a class="doc-link-btn" href="https://youtu.be/-boLdoQEGDY" target="_blank" rel="noopener">Video walkthrough <span aria-hidden="true">&#8599;</span></a>
-      <a class="doc-link-btn" href="../assets/projects/ImpactOfMicrolendingInterestRates.pdf" target="_blank" rel="noopener">Project write-up (PDF) <span aria-hidden="true">&#8599;</span></a>
     </p>
     </section>
 
@@ -82,7 +82,9 @@
     <p class="eyebrow">Extended</p>
 
     <h3>Why I built it</h3>
-    <p>I come from a very large, tight-knit family in Mexico, where we can lend each other small amounts at <strong>0% interest</strong> instead of going to a bank. That is a privilege. Many people without that network, and without access to traditional credit, end up with <strong>informal moneylenders or microlenders that charge very high rates</strong>. Microlending and its consequences are still poorly understood, especially in the developed countries that build and export these financial models.</p>
+    <p>I come from a very large, tight-knit family in Mexico, where we can lend each other small amounts at <strong>0% interest</strong> instead of going to a bank. That is a privilege. Many people without that network, and without access to traditional credit, turn to <strong>informal moneylenders or microlenders</strong>, where rates are higher to cover the extra risk and, <strong>in some cases, can get very high</strong>. Microlending and its consequences are still poorly understood, especially in the developed countries that build and export these financial models.</p>
+
+    <p>Microlending itself is not the problem. As I found in my <a href="papers.html">research paper</a>, its overall impact is <strong>slightly positive</strong>: randomized evaluations in <strong>six countries</strong> found it is not transformative, but it gives borrowers <strong>more freedom in their choices</strong>, and in Brazil, access to credit from the fintech Avante raised small firms&rsquo; <strong>monthly revenues and profits by about 4.5%</strong>. Demand is also huge, with a <strong>finance gap of about US$5.7 trillion</strong> for small businesses in developing countries. But its <strong>implementation is delicate</strong>: the same loan that helps a business grow can, at a high enough rate, become hard to escape. That thin line is what this model explores.</p>
 
     <h3>How the model works</h3>
     <p>The app simulates the <strong>alternative credit scoring</strong> many microlenders use instead of a FICO score, since their customers often run informal businesses with little reliable financial data. The user&rsquo;s credit score is a <strong>weighted linear combination</strong> of three parts, plus a bonus for savings:</p>
@@ -93,7 +95,7 @@
     </ul>
     <p>The heart of the model is the <strong>probability of friendship</strong>. I drew a <strong>directed graph, in the style of a Bayes net</strong>, of how the variables depend on each other: the user&rsquo;s sport, liking dinosaurs, hours spent on screen, texts with clients and number of successful businesses. Liking dinosaurs depends on the sport through a small conditional probability table. The friendship probability itself is a <strong>clipped linear additive model</strong>: it starts from a prior of 0.5, adds a contribution for each shared trait, and is cut to stay between 0 and 1.</p>
     <p>Counts such as texts with clients and number of businesses are modeled as <strong>Gaussian random variables</strong>, since by the <strong>Central Limit Theorem</strong> they add up many small, independent behaviors. A higher credit score leads to a <strong>larger loan</strong> and a higher expected profit, which creates a <strong>positive feedback loop</strong>.</p>
-    <p>The result: <strong>raising the interest rate makes it more likely that the user falls into a cycle of debt they cannot escape</strong>.</p>
+    <p>The result: <strong>past a certain point, a higher interest rate makes it more likely that the user falls into a cycle of debt</strong>.</p>
     <p>Using social networks to assess credit was inspired by the paper <a href="https://arxiv.org/pdf/2001.10994" target="_blank" rel="noopener">&ldquo;Credit Scoring for Good&rdquo;</a> by Óskarsdóttir et al., and by past conversations with Stanford development economist <strong>Dr. Arun Chandrasekhar</strong>.</p>
 
     <h3>How I built it</h3>
@@ -110,7 +112,7 @@
   <footer>Gerardo Murga</footer>
 </div>
 
-<script src="../script.js?v=24"></script>
+<script src="../script.js?v=25"></script>
 
 </body>
 </html>
