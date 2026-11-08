@@ -850,7 +850,8 @@
   .home nav a + a { border-left-color: var(--c-rule, rgba(255,255,255,0.2)); }
   .home .panel-about { padding-top: 34px; }
 
-  /* the page now ends at the index view: one screen plus exactly the first scroll (0.9 / 1.1 of a screen) */
+  /* the intro takes one screen plus exactly the first scroll (0.9 / 1.1 of a screen); the About, Projects
+     and Other sections follow below it in normal scrolling */
   .showcase { position: relative; height: calc(100vh + 90vh / 1.1); }
 
   .pin { position: sticky; top: 0; height: 100vh; overflow: hidden; background: var(--bg, #10294f); }
@@ -1174,7 +1175,7 @@
     /* globe: fills the space left of the window, kept below the portrait (which ends at 231px) */
     --g-top: 240px;
     --g-space: calc(100vw - 0.5vw - var(--cc-w));
-    --g-size: min(calc(var(--g-space) * 0.86), calc(100vh - var(--g-top) - 20px), 760px);
+    --g-size: min(calc(var(--g-space) * 0.66), calc(100vh - var(--g-top) - 60px), 560px);   /* a smaller globe */
   }
 
   .map {
@@ -1270,7 +1271,7 @@
        --wrap-h and --card-h are measured by script.js so the globe takes exactly the room that is left. */
     .pin {
       --ph-top: 178px;
-      --ph-g: max(110px, min(80vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 34px)));
+      --ph-g: max(110px, min(64vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 34px)));
     }
     .map { left: calc(50vw - var(--ph-g) / 2); top: var(--ph-top); width: var(--ph-g); }
     .contact-card {
@@ -1330,9 +1331,33 @@
 
   /* very short phones (original iPhone SE, 568px tall): drop the window's title bar and tighten the list */
   @media (max-width: 720px) and (max-height: 600px) {
-    .pin { --ph-top: 160px; --ph-g: max(90px, min(80vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 28px))); }
+    .pin { --ph-top: 160px; --ph-g: max(90px, min(64vw, calc(100vh - var(--ph-top) - 2vh - var(--card-h, 84px) - var(--wrap-h, 260px) - 28px))); }
     .cc-top { display: none; }
     .cc-side { font-size: 10px; padding-top: 0.35em; }
     .cc-mini { display: none; }                               /* the decorative input goes first on the tiniest screens */
     .cc-item { padding: 0.1em 0.6em; }
+  }
+
+  /* ---------- home page: About, Projects and Other below the globe view, then the contact card ---------- */
+  body.home { background: #0b0b0e; }
+  .home-sec { background: #0b0b0e; padding: 84px 0 40px; overflow: visible; overflow-x: clip; }   /* glows never widen the page */
+  .home-sec + .home-sec { padding-top: 56px; }
+  .home-sec .works-head, .home-sec .about-wrap, .home-sec .works-stage, .home-sec .works-grid, .home-sec .works-nav { position: relative; z-index: 1; }
+  .home-sec .works-head { margin-bottom: 22px; }
+  .home-sec .works-heading { font-size: 2.3rem; }
+  .home-sec .about-wrap { margin-top: 0; }
+  .works-grid .work.work-static { width: auto; }             /* fill the grid column */
+  .home-end { position: relative; z-index: 1; padding-top: 40px; background: #0b0b0e; }
+  .home-end .contact-card--inline { margin: 0 auto 30px; grid-template-columns: minmax(0, 1fr) auto; }   /* the end of the page, centred; the buttons get the width they need */
+  .home-end .contact-card-actions { flex-direction: row; gap: 8px; }
+  .home-end .contact-card-email { flex: 1 1 auto; }
+  .home-end .contact-card-email span { white-space: nowrap; flex: none; }
+  .home-end .contact-card-links { flex: none; display: flex; gap: 8px; }
+  .home-end footer { color: #8a8a93; border-top-color: #2c2c30; }
+  @media (max-width: 720px) {
+    .home-sec { padding: 64px 0 28px; }
+    .home-sec .works-heading { font-size: 1.9rem; }
+    .home-end .contact-card-actions { flex-wrap: wrap; }
+    .home-end .contact-card-email { flex: 1 1 100%; justify-content: center; }
+    .home-end .contact-card-links { flex: 1 1 100%; display: grid; grid-template-columns: 1fr 1fr; }
   }

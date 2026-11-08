@@ -774,10 +774,10 @@
   var pin = document.querySelector(".showcase .pin");
   var wrap = pin && pin.querySelector(".cc-wrap");
   var card = pin && pin.querySelector(".contact-card");
-  if (!wrap || !card) { return; }
+  if (!wrap) { return; }
   function sync() {
     pin.style.setProperty("--wrap-h", wrap.offsetHeight + "px");
-    pin.style.setProperty("--card-h", card.offsetHeight + "px");
+    pin.style.setProperty("--card-h", (card ? card.offsetHeight : 0) + "px");   /* the card now sits at the end of the page */
   }
   sync();
   window.addEventListener("resize", sync);

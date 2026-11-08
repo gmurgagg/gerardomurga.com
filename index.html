@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=Jost:wght@700&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add("has-js");</script>
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=36">
 </head>
 <body class="home">
 
@@ -101,17 +101,17 @@
     </div>
 
     <div class="quick-links" role="navigation" aria-label="Main sections">
-      <a class="quick-link" href="tabs/about.html">
+      <a class="quick-link" href="#about">
         <span class="ql-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 19.5c1.3-3.4 4-5.1 7.2-5.1s5.9 1.7 7.2 5.1"/></svg></span>
         <span class="ql-text"><span class="ql-title">About me</span><span class="ql-sub">Stanford, research, Mariachi Cardenal</span></span>
         <span class="ql-arrow" aria-hidden="true">&rarr;</span>
       </a>
-      <a class="quick-link" href="tabs/projects.html">
+      <a class="quick-link" href="#projects">
         <span class="ql-icon"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg></span>
         <span class="ql-text"><span class="ql-title">Projects</span><span class="ql-sub">NFL model, microlending, LectusXP</span></span>
         <span class="ql-arrow" aria-hidden="true">&rarr;</span>
       </a>
-      <a class="quick-link" href="tabs/other.html">
+      <a class="quick-link" href="#other">
         <span class="ql-icon"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 5.1 5.6.7-4.1 3.9 1 5.5L12 16l-4.9 2.7 1-5.5L4 9.3l5.6-.7z"/></svg></span>
         <span class="ql-text"><span class="ql-title">Other activities</span><span class="ql-sub">Research papers, music, speaking</span></span>
         <span class="ql-arrow" aria-hidden="true">&rarr;</span>
@@ -125,23 +125,6 @@
       <span class="visually-hidden">(PDF, opens in a new tab)</span>
     </a>
   </div>
-  <!-- contact card: its own block at the bottom right, centred under the resume button -->
-  <aside class="contact-card" aria-labelledby="contact-card-title">
-    <div class="contact-card-intro">
-      <h2 id="contact-card-title" class="contact-card-title">Get in touch</h2>
-      <p class="contact-card-text">Open to data science and machine learning internships.</p>
-    </div>
-    <div class="contact-card-actions">
-      <a class="contact-card-email" href="mailto:gmurga@stanford.edu">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="3.3" width="12.4" height="9.4" rx="1.6"/><path d="m2.4 4.3 5.6 4.4 5.6-4.4"/></svg>
-        <span>gmurga@<wbr>stanford.edu</span>
-      </a>
-      <div class="contact-card-links">
-        <a href="https://github.com/gmurgagg" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
-        <a href="https://www.linkedin.com/in/gerardomurga/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
-      </div>
-    </div>
-  </aside>
   <!-- scroll hint on the intro: fades out as soon as the visitor starts scrolling -->
   <img class="scroll-hint" src="assets/scroll-arrows.svg" alt="" aria-hidden="true">
   <!-- 2D ragdoll stickman (after the stickman by LDev) that hangs from the cursor on the index view -->
@@ -167,8 +150,208 @@
     </model-viewer>
   </div>
 </section>
+<!-- the rest of the site on the home page: scroll down past the globe view -->
+<section class="works home-sec" id="about">
+  <div class="works-deco" aria-hidden="true">
+    <img src="assets/glasses.png"     alt="" style="left:4%;  top:10%; width:84px;  transform:rotate(14deg)">
+    <img src="assets/mariachiHat.png" alt="" style="right:5%; top:8%;  width:96px;  transform:rotate(-10deg)">
+    <img src="assets/normal.png"      alt="" style="left:7%;  top:62%; width:92px;  transform:rotate(-8deg)">
+    <img src="assets/creditCard.png"  alt="" style="right:8%; top:58%; width:80px;  transform:rotate(16deg)">
+    <img src="assets/glasses.png"     alt="" style="left:22%; top:88%; width:60px;  transform:rotate(-18deg)">
+    <img src="assets/mariachiHat.png" alt="" style="right:24%;top:90%; width:66px;  transform:rotate(9deg)">
+    <img src="assets/creditCard.png"  alt="" style="left:30%; top:4%;  width:58px;  transform:rotate(-14deg)">
+    <img src="assets/normal.png"      alt="" style="right:30%;top:2%;  width:64px;  transform:rotate(11deg)">
+  </div>
+  <div class="works-head wrap">
+    <div>
+      <h2 class="works-heading">About <em>me.</em></h2>
+    </div>
+  </div>
+  <div class="about-wrap wrap">
+    <article class="about-card">
+      <div class="about-intro">
+        <div>
+          <h3 class="about-hello">Hello! My name is Gerardo Murga.</h3>
+          <p class="about-degree">I am pursuing a <strong>Bachelor of Science in Economics and a Computer Science Minor</strong>.</p>
+        </div>
+      </div>
+
+      <p class="about-lede">My experiences have revolved around my life&rsquo;s goal of building a great company in Latin America. As part of the journey, I&rsquo;ve acquired strong finance and data science / ML engineering skills.</p>
+
+      <ul class="about-list">
+        <li>
+          <span>I currently work as an <strong>Econometrics &amp; ML Research Assistant</strong> in Stanford&rsquo;s Department of Economics, supporting the development of a statistical model.</span></li>
+        <li>
+          <span>2025 Intern, <strong>Corporate &amp; Investment Banking</strong> (Operations and M&amp;A rotation) at BBVA Mexico. I generated annual savings of millions of pesos by automating the auditing of over 14,000 permits, identifying around 800 allocation errors.</span></li>
+        <li>
+          <span>I am a <strong>Rise fellow</strong> (Rhodes Trust and Schmidt Futures). We were named by Forbes among the world&rsquo;s 100 most promising change-makers. Within Rise, I founded the Rise Latin American Union and collaborated with Latin American partners for strategic outreach in the region.</span></li>
+      </ul>
+
+      <div class="about-chips">
+        <div class="chip-row"><span class="chip-label">Code</span><span class="chip">Python</span><span class="chip">R</span><span class="chip">C++</span><span class="chip">SQL</span></div>
+        <div class="chip-row"><span class="chip-label">Languages</span><span class="chip">Spanish <em>native</em></span><span class="chip">English <em>advanced</em></span><span class="chip">French <em>advanced</em></span><span class="chip">German <em>advanced</em></span></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="works home-sec" id="projects">
+  <div class="works-deco" aria-hidden="true">
+    <img src="assets/glasses.png"     alt="" style="left:4%;  top:10%; width:84px;  transform:rotate(14deg)">
+    <img src="assets/mariachiHat.png" alt="" style="right:5%; top:8%;  width:96px;  transform:rotate(-10deg)">
+    <img src="assets/normal.png"      alt="" style="left:7%;  top:62%; width:92px;  transform:rotate(-8deg)">
+    <img src="assets/creditCard.png"  alt="" style="right:8%; top:58%; width:80px;  transform:rotate(16deg)">
+    <img src="assets/glasses.png"     alt="" style="left:22%; top:88%; width:60px;  transform:rotate(-18deg)">
+    <img src="assets/mariachiHat.png" alt="" style="right:24%;top:90%; width:66px;  transform:rotate(9deg)">
+    <img src="assets/creditCard.png"  alt="" style="left:30%; top:4%;  width:58px;  transform:rotate(-14deg)">
+    <img src="assets/normal.png"      alt="" style="right:30%;top:2%;  width:64px;  transform:rotate(11deg)">
+  </div>
+  <div class="works-head wrap">
+    <div>
+      <p class="eyebrow">Selected work</p>
+      <h2 class="works-heading">What I&rsquo;m <em>building.</em></h2>
+    </div>
+    <p class="works-count" aria-live="polite"><span class="works-num">01</span> / 03 &middot; <span class="works-name">Predicting NFL games</span></p>
+  </div>
+  <div class="works-stage" role="region" aria-roledescription="carousel" aria-label="Projects" tabindex="0">
+      <article class="work" data-index="0">
+        <div class="work-photo">
+          <!-- photo: drop an image in assets/projects/ and add  <img src="assets/projects/FILE.jpg" alt="...">  here -->
+          <img src="assets/nfl.avif" alt="NFL game photo for the NFL prediction project">
+          <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Project photo here</span>
+        </div>
+        <div class="work-body">
+          <p class="work-tag">R &middot; Python &middot; Machine learning</p>
+          <h2 class="work-title">Predicting NFL games</h2>
+          <p class="work-meta">Research with Prof. Arun Chandrasekhar &middot; 2026</p>
+          <p class="work-desc">Fifteen seasons of play-by-play data, a factor method that failed honestly, and a random forest that nearly matches the Vegas line.</p>
+          <a class="work-cta" href="tabs/nfl-model.html">Read the write-up <span aria-hidden="true">&#8599;</span></a>
+        </div>
+        <span class="work-label" aria-hidden="true">Predicting NFL games</span>
+      </article>
+      <article class="work" data-index="1">
+        <div class="work-photo">
+          <!-- photo: drop an image in assets/projects/ and add  <img src="assets/projects/FILE.jpg" alt="...">  here -->
+          <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Project photo here</span>
+        </div>
+        <div class="work-body">
+          <p class="work-tag">Fintech &middot; Interactive tool</p>
+          <h2 class="work-title">Microlending debt trap</h2>
+          <p class="work-meta">Interactive model &middot; In progress</p>
+          <p class="work-desc">Set the interest rate, the term and the income volatility, then see where repayment becomes impossible and where it does not.</p>
+          <a class="work-cta" href="tabs/microlending.html">See the project <span aria-hidden="true">&#8599;</span></a>
+        </div>
+        <span class="work-label" aria-hidden="true">Microlending debt trap</span>
+      </article>
+      <article class="work" data-index="2">
+        <div class="work-photo">
+          <!-- photo: drop an image in assets/projects/ and add  <img src="assets/projects/FILE.jpg" alt="...">  here -->
+          <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Project photo here</span>
+        </div>
+        <div class="work-body">
+          <p class="work-tag">Education &middot; Shipped app</p>
+          <h2 class="work-title">LectusXP</h2>
+          <p class="work-meta">Live on the Play Store &middot; Rise fellowship</p>
+          <p class="work-desc">Short interactive readings for children. The project behind my Rise fellowship.</p>
+          <a class="work-cta" href="tabs/lectusxp.html">See the project <span aria-hidden="true">&#8599;</span></a>
+        </div>
+        <span class="work-label" aria-hidden="true">LectusXP</span>
+      </article>
+  </div>
+  <div class="works-nav">
+    <button class="works-arrow" type="button" data-dir="-1" aria-label="Previous project">&larr;</button>
+    <div class="works-dots" role="tablist">
+      <button class="works-dot" type="button" data-to="0" aria-label="Predicting NFL games"></button>
+      <button class="works-dot" type="button" data-to="1" aria-label="Microlending debt trap"></button>
+      <button class="works-dot" type="button" data-to="2" aria-label="LectusXP"></button>
+    </div>
+    <button class="works-arrow" type="button" data-dir="1" aria-label="Next project">&rarr;</button>
+  </div>
+</section>
+
+<section class="works home-sec" id="other">
+  <div class="works-deco" aria-hidden="true">
+    <img src="assets/glasses.png"     alt="" style="left:4%;  top:10%; width:84px;  transform:rotate(14deg)">
+    <img src="assets/mariachiHat.png" alt="" style="right:5%; top:8%;  width:96px;  transform:rotate(-10deg)">
+    <img src="assets/normal.png"      alt="" style="left:7%;  top:62%; width:92px;  transform:rotate(-8deg)">
+    <img src="assets/creditCard.png"  alt="" style="right:8%; top:58%; width:80px;  transform:rotate(16deg)">
+    <img src="assets/glasses.png"     alt="" style="left:22%; top:88%; width:60px;  transform:rotate(-18deg)">
+    <img src="assets/mariachiHat.png" alt="" style="right:24%;top:90%; width:66px;  transform:rotate(9deg)">
+    <img src="assets/creditCard.png"  alt="" style="left:30%; top:4%;  width:58px;  transform:rotate(-14deg)">
+    <img src="assets/normal.png"      alt="" style="right:30%;top:2%;  width:64px;  transform:rotate(11deg)">
+  </div>
+  <div class="works-head wrap">
+    <div>
+      <p class="eyebrow">Other things I do</p>
+      <h2 class="works-heading">Beyond the <em>models.</em></h2>
+    </div>
+  </div>
+  <div class="works-grid wrap">
+    <article class="work work-static">
+      <div class="work-photo">
+        <!-- photo: drop an image in assets/other/ and add  <img src="assets/other/FILE.jpg" alt="...">  here -->
+        <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Photo here</span>
+      </div>
+      <div class="work-body">
+        <p class="work-tag">Research &middot; Writing</p>
+        <h3 class="work-title">Research papers</h3>
+        <p class="work-meta">Econometrics, development, machine learning</p>
+        <p class="work-desc">Papers and write-ups from my coursework and research.</p>
+        <a class="work-cta" href="tabs/papers.html">Read the papers <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </article>
+    <article class="work work-static">
+      <div class="work-photo">
+        <!-- photo: drop an image in assets/other/ and add  <img src="assets/other/FILE.jpg" alt="...">  here -->
+        <img src="assets/mariachi.png" alt="Gerardo performing with Stanford Mariachi Cardenal">
+        <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Photo here</span>
+      </div>
+      <div class="work-body">
+        <p class="work-tag">Music &middot; Performance</p>
+        <h3 class="work-title">Music</h3>
+        <p class="work-meta">Stanford Mariachi Cardenal</p>
+        <p class="work-desc">Lead singer and vice president of Stanford Mariachi Cardenal.</p>
+        <a class="work-cta" href="tabs/music.html">Listen <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </article>
+    <article class="work work-static">
+      <div class="work-photo">
+        <!-- photo: drop an image in assets/other/ and add  <img src="assets/other/FILE.jpg" alt="...">  here -->
+        <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Photo here</span>
+      </div>
+      <div class="work-body">
+        <p class="work-tag">Speaking &middot; Community</p>
+        <h3 class="work-title">Speaking</h3>
+        <p class="work-meta">Talks and presentations</p>
+        <p class="work-desc">Talks I have given and the events behind them.</p>
+        <a class="work-cta" href="tabs/speaking.html">See the talks <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<div class="wrap home-end">
+  <aside class="contact-card contact-card--inline" aria-labelledby="contact-card-title">
+    <div class="contact-card-intro">
+      <h2 id="contact-card-title" class="contact-card-title">Get in touch</h2>
+      <p class="contact-card-text">Open to data science and machine learning internships.</p>
+    </div>
+    <div class="contact-card-actions">
+      <a class="contact-card-email" href="mailto:gmurga@stanford.edu">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="3.3" width="12.4" height="9.4" rx="1.6"/><path d="m2.4 4.3 5.6 4.4 5.6-4.4"/></svg>
+        <span>gmurga@stanford.edu</span>
+      </a>
+      <div class="contact-card-links">
+        <a href="https://github.com/gmurgagg" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
+        <a href="https://www.linkedin.com/in/gerardomurga/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
+      </div>
+    </div>
+  </aside>
+
+  <footer>Gerardo Murga</footer>
+</div>
 <script type="module" src="https://unpkg.com/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
-<script src="script.js?v=18"></script>
+<script src="script.js?v=19"></script>
 
 </body>
 </html>
