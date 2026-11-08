@@ -355,9 +355,58 @@
 
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  function block(ev) { if (animating) { ev.preventDefault(); } }
-  window.addEventListener("wheel", block, { passive: false });
-  window.addEventListener("touchmove", block, { passive: false });
+  /* the intro never scrolls by hand: the first wheel tick, swipe or key press inside it starts the
+     animation right away, instead of letting the page move a little and then taking over (which felt
+     laggy). The rest of that same flick (trackpads keep sending wheel events for a while) is swallowed,
+     so it can't push the page on past where the animation lands. Below the landing point, normal scrolling. */
+  var swallow = false, quietTimer = 0;
+  function quietSoon() {                         /* the flick has ended once input pauses for a moment */
+    clearTimeout(quietTimer);
+    quietTimer = setTimeout(function () { swallow = false; }, 180);
+  }
+  /* dir: 1 = down, -1 = up. Returns true when the intro took this input */
+  function introInput(dir) {
+    if (animating || swallow) { return true; }
+    var y = window.scrollY, L = landing();
+    if (y < L - 1) {                             /* inside the intro: play it towards the scroll */
+      if (dir > 0) { glide(y, L); }
+      else if (y > 1) { glide(y, 0); }
+      swallow = true; return true;
+    }
+    if (dir < 0 && y <= L + 1) {                 /* at the landing point, going up: back to the intro */
+      glide(y, 0); swallow = true; return true;
+    }
+    return false;
+  }
+
+  window.addEventListener("wheel", function (ev) {
+    if (ev.ctrlKey || Math.abs(ev.deltaY) <= Math.abs(ev.deltaX)) { return; }   /* pinch zoom, sideways */
+    if (introInput(ev.deltaY > 0 ? 1 : -1)) { ev.preventDefault(); quietSoon(); }
+  }, { passive: false });
+
+  var touchY = null;
+  window.addEventListener("touchstart", function (ev) { touchY = ev.touches[0].clientY; }, { passive: true });
+  window.addEventListener("touchmove", function (ev) {
+    if (touchY === null) { if (animating) { ev.preventDefault(); } return; }
+    var dy = touchY - ev.touches[0].clientY;     /* finger up = scroll down */
+    if (Math.abs(dy) < 6) { if (animating) { ev.preventDefault(); } return; }
+    if (introInput(dy > 0 ? 1 : -1)) { ev.preventDefault(); }
+    else { touchY = null; }                      /* normal page scrolling for the rest of this swipe */
+  }, { passive: false });
+  window.addEventListener("touchend", function () { touchY = null; swallow = false; }, { passive: true });
+
+  window.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey) { return; }
+    var t = ev.target, tag = t && t.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || (t && t.isContentEditable)) { return; }
+    if (t && t.closest && t.closest(".works-stage")) { return; }                    /* carousel arrows */
+    var k = ev.key, dir = 0;
+    if (k === " " && (tag === "BUTTON" || tag === "A")) { return; }                 /* space presses a button */
+    if (k === "ArrowDown" || k === "PageDown" || (k === " " && !ev.shiftKey)) { dir = 1; }
+    if (k === "ArrowUp" || k === "PageUp" || (k === " " && ev.shiftKey)) { dir = -1; }
+    if (k === "Home") { dir = -1; }
+    if (dir && introInput(dir)) { ev.preventDefault(); setTimeout(function () { swallow = false; }, 0); }
+  });
 
   function refresh() { placeGlobe(); measure(); cur = target = window.scrollY; render(cur); }
   window.addEventListener("resize", refresh);
