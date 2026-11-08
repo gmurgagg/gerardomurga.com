@@ -672,6 +672,34 @@
   }
   @media (prefers-reduced-motion: reduce) { .work, .work-photo img, .works-dot { transition: none; } }
 
+  /* ---------- Other page: same look as Projects, but a static row of cards ---------- */
+  .works-grid {
+    position: relative; z-index: 1; max-width: 1040px;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding-top: 14px; padding-bottom: 10px;
+  }
+  .works-grid::before {                                    /* soft light behind the row */
+    content: ""; position: absolute; inset: -40px -10% -20px; pointer-events: none; z-index: -1;
+    background: radial-gradient(closest-side, rgba(240, 165, 133, 0.13), transparent);
+  }
+  .work.work-static {
+    grid-area: auto; width: auto; cursor: default; transform: none;
+    filter: brightness(0.9); transform-origin: 50% 50%;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 40px 2px rgba(240, 165, 133, 0.07), 0 24px 50px -26px rgba(0, 0, 0, 0.85);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .work.work-static:hover, .work.work-static:focus-within {
+    transform: scale(1.04); filter: brightness(1.1); z-index: 2; border-color: rgba(240, 165, 133, 0.45);
+    box-shadow: 0 0 0 1px rgba(240, 165, 133, 0.3), 0 0 60px 6px rgba(240, 165, 133, 0.18), 0 30px 60px -26px rgba(0, 0, 0, 0.9);
+  }
+  .work.work-static a { pointer-events: auto; }
+  .page-other .work.work-static { width: auto; }             /* fill the grid column (the Projects card width does not apply) */
+  .work.work-static:hover .work-photo img { transform: scale(1.04); }
+  @media (max-width: 720px) {
+    .works-grid { grid-template-columns: 1fr; gap: 18px; }
+    .page-other .work-photo { height: 140px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .work.work-static { transition: filter 0.3s ease; } .work.work-static:hover { transform: none; } }
+
   /* ---------- Projects page: one screen, vertical cards, contact card at the bottom ---------- */
   body.page-projects { display: flex; flex-direction: column; min-height: 100vh; }
   .page-projects .works { flex: 1 0 auto; padding: 26px 0 6px; }     /* takes the spare height, pushing the contact card down */
