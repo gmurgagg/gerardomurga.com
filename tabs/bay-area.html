@@ -8,10 +8,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=42">
+<link rel="stylesheet" href="../style.css?v=43">
 <script>document.documentElement.classList.add("has-js");</script>
 </head>
-<body>
+<body class="doc-dark">
+<!-- line doodles behind the page (same moving layer as the home page), kept to the margins -->
+<div class="band-deco page-deco" aria-hidden="true">
+  <img src="../assets/doodles/normal.png" alt="" data-speed="0.62" data-rot="-8" style="left:3%; top:10%; width:84px; opacity:0.5">
+  <img src="../assets/doodles/glasses.png" alt="" data-speed="-0.55" data-rot="14" style="left:90%; top:22%; width:66px; opacity:0.42">
+  <img src="../assets/doodles/creditCard.png" alt="" data-speed="0.78" data-rot="-16" style="left:6%; top:46%; width:72px; opacity:0.46">
+  <img src="../assets/doodles/mariachiHat.png" alt="" data-speed="-0.42" data-rot="7" style="left:88%; top:58%; width:80px; opacity:0.48">
+  <img src="../assets/doodles/supplyYdemand.png" alt="" data-speed="0.36" data-rot="-4" style="left:2%; top:78%; width:86px; opacity:0.42">
+  <img src="../assets/doodles/glasses.png" alt="" data-speed="-0.7" data-rot="11" style="left:8%; top:96%; width:58px; opacity:0.36">
+  <img src="../assets/doodles/normal.png" alt="" data-speed="0.5" data-rot="17" style="left:91%; top:88%; width:62px; opacity:0.4">
+  <img src="../assets/doodles/creditCard.png" alt="" data-speed="-0.82" data-rot="-13" style="left:86%; top:4%; width:58px; opacity:0.38">
+  <img src="../assets/doodles/supplyYdemand.png" alt="" data-speed="0.7" data-rot="9" style="left:93%; top:40%; width:64px; opacity:0.36">
+</div>
+
+
 
 <div class="navbar">
   <div class="progress"><span id="progress-bar"></span></div>
@@ -44,21 +58,31 @@
 
 <div class="wrap">
 
-  <section class="panel panel-page reveal">
+  <!-- write-up card, same format as the NFL write-up -->
+  <article class="doc doc-card">
+    <section class="doc-part">
+    <p class="eyebrow">Write-up</p>
     <p>Write-up in progress. This is where my experiences in San Francisco Bay Area will go.</p>
-  </section>
+    </section>
+  </article>
 
-  <section class="contact reveal">
-    <div>
-      <h2>Get in touch</h2>
-      <p>Open to data science and machine learning internships.</p>
+  <!-- same contact card as the home page -->
+  <aside class="contact-card contact-card--inline" aria-labelledby="contact-card-title">
+    <div class="contact-card-intro">
+      <h2 id="contact-card-title" class="contact-card-title">Get in touch</h2>
+      <p class="contact-card-text">Open to data science and machine learning internships.</p>
     </div>
-    <div class="contact-links">
-      <a href="mailto:gmurga@stanford.edu">Email</a>
-      <a href="https://github.com/gmurgagg">GitHub</a>
-      <a href="https://www.linkedin.com/in/gerardomurga/">LinkedIn</a>
+    <div class="contact-card-actions">
+      <a class="contact-card-email" href="mailto:gmurga@stanford.edu">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="3.3" width="12.4" height="9.4" rx="1.6"/><path d="m2.4 4.3 5.6 4.4 5.6-4.4"/></svg>
+        <span>gmurga@stanford.edu</span>
+      </a>
+      <div class="contact-card-links">
+        <a href="https://github.com/gmurgagg" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
+        <a href="https://www.linkedin.com/in/gerardomurga/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
+      </div>
     </div>
-  </section>
+  </aside>
 
   <footer>Gerardo Murga</footer>
 </div>
