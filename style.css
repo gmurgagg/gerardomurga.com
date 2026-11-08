@@ -1361,9 +1361,17 @@
     max-width: 1180px; display: grid; grid-template-columns: minmax(0, 1fr) clamp(240px, 27vw, 360px);
     gap: clamp(20px, 3vw, 44px); align-items: center;
   }
-  .about-globe { position: relative; }
+  .about-globe { position: relative; display: flex; justify-content: center; }
+  /* side by side: the globe's box reaches from the card's right edge to the screen's right edge,
+     and the globe sits in the middle of that space */
+  @media (min-width: 961px) {
+    .about-globe {
+      margin-left: calc(-1 * clamp(20px, 3vw, 44px));                                   /* back over the gap */
+        margin-right: calc((min(1180px, 100vw) - 100vw) / 2 - 28px);                      /* out to the screen edge */
+    }
+  }
   .about-globe .map {
-    position: relative; left: auto; top: auto; width: 100%; z-index: 2;
+    position: relative; left: auto; top: auto; width: clamp(240px, 27vw, 360px); flex: none; z-index: 2;
     transition: opacity 0.9s ease;
   }
   .home .pin .cc-wrap { display: none; }                   /* laptops: no column on the intro */
@@ -1371,6 +1379,7 @@
   @media (max-width: 960px) and (min-width: 721px) {       /* narrow laptops: globe under the card */
     .home-sec .about-wrap { grid-template-columns: 1fr; }
     .about-globe { width: min(320px, 60vw); margin: 0 auto; }
+    .about-globe .map { width: 100%; }
   }
   /* contact buttons: one row at the top right of the About section */
   .contact-row { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-bottom: 18px; }
