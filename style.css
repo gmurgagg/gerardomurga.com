@@ -675,6 +675,25 @@
   .cc-mini.is-thinking .cc-mini-think { display: flex; }
   .cc-mini.is-thinking .cc-mini-ph, .cc-mini.is-thinking .cc-mini-typed, .cc-mini.is-thinking .cc-mini-caret { display: none; }
 
+  /* ---------- small Claude Code window above the section buttons ---------- */
+  .cc.cc-small {
+    height: clamp(96px, calc(100vh - 690px), 175px);    /* 110px on a 1280x800 screen, 175px at most */
+    grid-template-rows: minmax(0, 1fr);                  /* the sidebar list clips instead of stretching the window */
+    margin-bottom: 10px;                                 /* extra space so it reads apart from the buttons */
+    grid-template-columns: 34% 1fr;
+  }
+  .cc-small .cc-side { padding: 0.6em 0.45em 0.5em; min-height: 0; overflow: hidden; }
+  .cc-small .cc-main { min-height: 0; overflow: hidden; }
+  .cc-small .cc-top { padding-bottom: 0.55em; }
+  .cc-small .cc-menu .cc-row:not(.cc-new), .cc-small .cc-user { display: none; }   /* only "New" + the list */
+  .cc-small .cc-projects { margin-top: 0.5em; }
+  .cc-small .cc-main { padding: 0.7em 0.8em 0.65em; }
+  .cc-small .cc-chat { justify-content: flex-end; padding: 0.2em 0.2em 0.6em; gap: 0.55em; overflow: hidden; }
+  .cc-small .cc-input { padding: 0.5em 0.7em; }
+
+  /* not enough height for window + buttons + resume above the contact card: the buttons win */
+  @media (max-height: 739px) { .cc.cc-small { display: none; } }
+
   /* ---------- three big section buttons ---------- */
   .quick-links { width: 100%; display: flex; flex-direction: column; gap: clamp(12px, 1.8vh, 16px); }
   .quick-link {
@@ -1011,6 +1030,7 @@
     .grey-square { width: 46vw; height: 24vh; top: auto; bottom: 5vh; right: 1vw; }
     /* phones: just the sidebar with the project links */
     .cc-wrap { width: min(86vw, 420px); height: auto; left: 0; right: 0; margin-inline: auto; bottom: calc(2vh + var(--card-h, 84px) + 12px); gap: 10px; }
+    .cc.cc-small { display: none; }                           /* phones: the three buttons are the navigation */
     /* phones: compact section buttons (icon + title only) so the globe keeps its room */
     .cc-mini { padding: 6px 8px 6px 11px; font-size: 0.8rem; }
     .cc-mini-send { width: 22px; height: 22px; }
