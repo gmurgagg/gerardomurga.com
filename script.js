@@ -785,3 +785,49 @@
   if (document.fonts && document.fonts.ready) { document.fonts.ready.then(sync); }
 })();
 
+
+/* Projects page carousel: centre card plus tilted neighbours; arrows, dots, side-card click,
+   keyboard arrows and swipe all move it. Wraps around at both ends. */
+(function () {
+  var stage = document.querySelector(".works-stage");
+  if (!stage) { return; }
+  var cards = Array.prototype.slice.call(stage.querySelectorAll(".work"));
+  var dots = Array.prototype.slice.call(document.querySelectorAll(".works-dot"));
+  var num = document.querySelector(".works-num"), name = document.querySelector(".works-name");
+  var n = cards.length, current = 0;
+
+  function show(i) {
+    current = (i + n) % n;
+    cards.forEach(function (c, k) {
+      var d = (k - current + n) % n;                       /* 0 centre, 1 right, n-1 left */
+      c.classList.toggle("is-center", d === 0);
+      c.classList.toggle("is-right", d === 1 && n > 1);
+      c.classList.toggle("is-left", d === n - 1 && n > 2);
+      c.setAttribute("aria-hidden", d === 0 ? "false" : "true");
+      Array.prototype.forEach.call(c.querySelectorAll("a"), function (a) { a.tabIndex = d === 0 ? 0 : -1; });
+    });
+    dots.forEach(function (dt, k) { dt.classList.toggle("is-on", k === current); dt.setAttribute("aria-selected", k === current); });
+    if (num) { num.textContent = (current < 9 ? "0" : "") + (current + 1); }
+    if (name) { name.textContent = cards[current].querySelector(".work-title").textContent; }
+  }
+
+  cards.forEach(function (c, k) {
+    c.addEventListener("click", function () { if (k !== current) { show(k); } });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".works-arrow"), function (b) {
+    b.addEventListener("click", function () { show(current + parseInt(b.getAttribute("data-dir"), 10)); });
+  });
+  dots.forEach(function (dt) { dt.addEventListener("click", function () { show(parseInt(dt.getAttribute("data-to"), 10)); }); });
+  stage.addEventListener("keydown", function (ev) {
+    if (ev.key === "ArrowRight") { show(current + 1); ev.preventDefault(); }
+    if (ev.key === "ArrowLeft") { show(current - 1); ev.preventDefault(); }
+  });
+  var x0 = null;                                           /* swipe on touch screens */
+  stage.addEventListener("pointerdown", function (ev) { if (ev.pointerType !== "mouse") { x0 = ev.clientX; } });
+  stage.addEventListener("pointerup", function (ev) {
+    if (x0 === null) { return; }
+    var dx = ev.clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) { show(current + (dx < 0 ? 1 : -1)); }
+  });
+  show(0);
+})();

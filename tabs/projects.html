@@ -7,11 +7,11 @@
 <meta name="description" content="Projects by Gerardo Murga: an NFL prediction model, a microlending debt-trap tool, and LectusXP.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=23">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=Jost:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=26">
 <script>document.documentElement.classList.add("has-js");</script>
 </head>
-<body>
+<body class="doc-dark page-projects">
 
 <div class="navbar">
   <div class="progress"><span id="progress-bar"></span></div>
@@ -27,63 +27,107 @@
   </div>
 </div>
 
-<header class="band band-sub">
-  <div class="band-deco" aria-hidden="true">
-    <img class="deco-1" src="../assets/normal.png"        alt="" data-speed="0.62"  data-rot="-8">
-    <img class="deco-3" src="../assets/creditCard.png"    alt="" data-speed="0.78"  data-rot="-16">
-    <img class="deco-7" src="../assets/mariachiHat.png"   alt="" data-speed="-0.48" data-rot="12">
-    <img class="deco-8" src="../assets/supplyYdemand.png" alt="" data-speed="0.34"  data-rot="-6">
-    <img class="deco-9" src="../assets/creditCard.png"    alt="" data-speed="-0.7"  data-rot="-13">
+
+<!-- projects: a carousel of cards on a dark page, with the site's line doodles behind -->
+<section class="works">
+  <div class="works-deco" aria-hidden="true">
+    <img src="../assets/glasses.png"     alt="" style="left:4%;  top:10%; width:84px;  transform:rotate(14deg)">
+    <img src="../assets/mariachiHat.png" alt="" style="right:5%; top:8%;  width:96px;  transform:rotate(-10deg)">
+    <img src="../assets/normal.png"      alt="" style="left:7%;  top:62%; width:92px;  transform:rotate(-8deg)">
+    <img src="../assets/creditCard.png"  alt="" style="right:8%; top:58%; width:80px;  transform:rotate(16deg)">
+    <img src="../assets/glasses.png"     alt="" style="left:22%; top:88%; width:60px;  transform:rotate(-18deg)">
+    <img src="../assets/mariachiHat.png" alt="" style="right:24%;top:90%; width:66px;  transform:rotate(9deg)">
+    <img src="../assets/creditCard.png"  alt="" style="left:30%; top:4%;  width:58px;  transform:rotate(-14deg)">
+    <img src="../assets/normal.png"      alt="" style="right:30%;top:2%;  width:64px;  transform:rotate(11deg)">
   </div>
-  <div class="wrap">
-    <p class="page-kicker">What I am building</p>
-    <h1 class="page-title">Projects</h1>
-    <p class="page-lede">Machine learning, interactive tools and a shipped app.</p>
+
+  <div class="works-head wrap">
+    <div>
+      <p class="eyebrow">Selected work</p>
+      <h2 class="works-heading">What I&rsquo;m <em>building.</em></h2>
+    </div>
+    <p class="works-count" aria-live="polite"><span class="works-num">01</span> / 03 &middot; <span class="works-name">Predicting NFL games</span></p>
   </div>
-</header>
+
+  <div class="works-stage" role="region" aria-roledescription="carousel" aria-label="Projects" tabindex="0">
+      <article class="work" data-index="0">
+        <div class="work-photo">
+          <!-- photo: drop an image in assets/projects/ and add  <img src="../assets/projects/FILE.jpg" alt="...">  here -->
+          <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Project photo here</span>
+        </div>
+        <div class="work-body">
+          <p class="work-tag">R &middot; Python &middot; Machine learning</p>
+          <h2 class="work-title">Predicting NFL games</h2>
+          <p class="work-meta">Research with Prof. Arun Chandrasekhar &middot; 2026</p>
+          <p class="work-desc">Fifteen seasons of play-by-play data, a factor method that failed honestly, and a random forest that nearly matches the Vegas line.</p>
+          <a class="work-cta" href="nfl-model.html">Read the write-up <span aria-hidden="true">&#8599;</span></a>
+        </div>
+        <span class="work-label" aria-hidden="true">Predicting NFL games</span>
+      </article>
+      <article class="work" data-index="1">
+        <div class="work-photo">
+          <!-- photo: drop an image in assets/projects/ and add  <img src="../assets/projects/FILE.jpg" alt="...">  here -->
+          <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Project photo here</span>
+        </div>
+        <div class="work-body">
+          <p class="work-tag">Fintech &middot; Interactive tool</p>
+          <h2 class="work-title">Microlending debt trap</h2>
+          <p class="work-meta">Interactive model &middot; In progress</p>
+          <p class="work-desc">Set the interest rate, the term and the income volatility, then see where repayment becomes impossible and where it does not.</p>
+          <a class="work-cta" href="microlending.html">See the project <span aria-hidden="true">&#8599;</span></a>
+        </div>
+        <span class="work-label" aria-hidden="true">Microlending debt trap</span>
+      </article>
+      <article class="work" data-index="2">
+        <div class="work-photo">
+          <!-- photo: drop an image in assets/projects/ and add  <img src="../assets/projects/FILE.jpg" alt="...">  here -->
+          <span class="work-photo-empty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="1.8"/><path d="m4.5 17.5 5-4.5 3.5 3 3-2.5 3.5 3"/></svg>Project photo here</span>
+        </div>
+        <div class="work-body">
+          <p class="work-tag">Education &middot; Shipped app</p>
+          <h2 class="work-title">LectusXP</h2>
+          <p class="work-meta">Live on the Play Store &middot; Rise fellowship</p>
+          <p class="work-desc">Short interactive readings for children. The project behind my Rise fellowship.</p>
+          <a class="work-cta" href="lectusxp.html">See the project <span aria-hidden="true">&#8599;</span></a>
+        </div>
+        <span class="work-label" aria-hidden="true">LectusXP</span>
+      </article>
+  </div>
+
+  <div class="works-nav">
+    <button class="works-arrow" type="button" data-dir="-1" aria-label="Previous project">&larr;</button>
+    <div class="works-dots" role="tablist">
+      <button class="works-dot" type="button" data-to="0" aria-label="Predicting NFL games"></button>
+      <button class="works-dot" type="button" data-to="1" aria-label="Microlending debt trap"></button>
+      <button class="works-dot" type="button" data-to="2" aria-label="LectusXP"></button>
+    </div>
+    <button class="works-arrow" type="button" data-dir="1" aria-label="Next project">&rarr;</button>
+  </div>
+</section>
 
 <div class="wrap">
-
-  <section class="panel panel-page reveal">
-    <div class="projects">
-
-      <a class="project reveal" href="nfl-model.html">
-        <span class="tag">R &middot; Machine learning</span>
-        <h3>Predicting NFL games with a factor pipeline</h3>
-        <p>SVD, Varimax rotation and weighted least squares on fifteen seasons of play by play data, benchmarked against a random forest.</p>
-      </a>
-
-      <a class="project reveal" href="microlending.html">
-        <span class="tag">Interactive tool</span>
-        <h3>When does microlending become a debt trap?</h3>
-        <p>Set the interest rate, the term and the income volatility, then see where repayment becomes impossible and where it does not.</p>
-      </a>
-
-      <a class="project reveal" href="lectusxp.html">
-        <span class="tag">Shipped app</span>
-        <h3>LectusXP</h3>
-        <p>Short interactive readings for children, live on the Play Store. The project behind my Rise fellowship.</p>
-      </a>
-
+  <!-- same contact card as the home page -->
+  <aside class="contact-card contact-card--inline" aria-labelledby="contact-card-title">
+    <div class="contact-card-intro">
+      <h2 id="contact-card-title" class="contact-card-title">Get in touch</h2>
+      <p class="contact-card-text">Open to data science and machine learning internships.</p>
     </div>
-  </section>
-
-  <section class="contact reveal">
-    <div>
-      <h2>Get in touch</h2>
-      <p>Open to data science and machine learning internships.</p>
+    <div class="contact-card-actions">
+      <a class="contact-card-email" href="mailto:gmurga@stanford.edu">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.8" y="3.3" width="12.4" height="9.4" rx="1.6"/><path d="m2.4 4.3 5.6 4.4 5.6-4.4"/></svg>
+        <span>gmurga@<wbr>stanford.edu</span>
+      </a>
+      <div class="contact-card-links">
+        <a href="https://github.com/gmurgagg" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#8599;</span></a>
+        <a href="https://www.linkedin.com/in/gerardomurga/" target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">&#8599;</span></a>
+      </div>
     </div>
-    <div class="contact-links">
-      <a href="mailto:gmurga@stanford.edu">Email</a>
-      <a href="https://github.com/gmurgagg">GitHub</a>
-      <a href="https://www.linkedin.com/in/gerardomurga/">LinkedIn</a>
-    </div>
-  </section>
+  </aside>
 
   <footer>Gerardo Murga</footer>
 </div>
 
-<script src="../script.js?v=17"></script>
+<script src="../script.js?v=18"></script>
 
 </body>
 </html>

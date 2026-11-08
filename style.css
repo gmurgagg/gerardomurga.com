@@ -577,6 +577,127 @@
     .doc p, .doc li { font-size: 1rem; }
   }
 
+  /* ---------- Projects page: card carousel on a dark page ---------- */
+  .works { position: relative; padding: 64px 0 36px; overflow: hidden; }
+  .works-deco { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+  .works-deco img { position: absolute; height: auto; opacity: 0.3; }
+  .works-head {
+    position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end;
+    gap: 16px; margin-bottom: 30px;
+  }
+  .works-head .eyebrow { color: var(--gold); margin-bottom: 8px; }
+  .works-heading { margin: 0; font: 700 2.6rem/1.05 "Jost", "Futura", system-ui, sans-serif; letter-spacing: -0.02em; color: #f6efe2; }
+  .works-heading em { font-style: normal; color: #f0a585; }
+  .works-count { margin: 0 0 6px; color: #9c9ca6; font-size: 0.86rem; white-space: nowrap; }
+  .works-num { color: #f6efe2; font-weight: 600; }
+
+  .works-stage { position: relative; z-index: 1; display: grid; justify-items: center; padding: 12px 0 18px; outline: none; }
+  .works-stage::before {                                   /* warm spotlight behind the centre card */
+    content: ""; position: absolute; left: 50%; top: 50%; width: 760px; height: 560px; max-width: 120vw;
+    transform: translate(-50%, -50%); pointer-events: none;
+    background: radial-gradient(closest-side, rgba(240, 165, 133, 0.16), rgba(240, 165, 133, 0.05) 55%, transparent);
+  }
+  .works-stage:focus-visible .work.is-center { outline: 2px solid #f0a585; outline-offset: 4px; }
+
+  .work {
+    grid-area: 1 / 1; position: relative; width: min(420px, 78vw); box-sizing: border-box;
+    background: #1c1c1c; border: 1px solid #3a3a3e; border-radius: 18px; overflow: hidden; color: #ececec;
+    transform-origin: 50% 60%; cursor: pointer;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease, filter 0.45s ease, box-shadow 0.35s ease;
+  }
+  .work.is-center {
+    z-index: 3; cursor: default; transform: none;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 64px 6px rgba(240, 165, 133, 0.14), 0 30px 60px -26px rgba(0, 0, 0, 0.85);
+  }
+  .work.is-center:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 0 1px rgba(240, 165, 133, 0.35), 0 0 80px 10px rgba(240, 165, 133, 0.2), 0 36px 70px -26px rgba(0, 0, 0, 0.9);
+  }
+  .work.is-left, .work.is-right { z-index: 2; opacity: 0.55; filter: saturate(0.7) brightness(0.8); }
+  .work.is-left  { transform: translateX(-74%) scale(0.84) rotate(-6deg); }
+  .work.is-right { transform: translateX(74%)  scale(0.84) rotate(6deg); }
+  /* hovering a side card: it straightens, lifts and shows its name */
+  .work.is-left:hover  { transform: translateX(-72%) translateY(-12px) scale(0.86) rotate(0deg); opacity: 0.92; filter: none; }
+  .work.is-right:hover { transform: translateX(72%)  translateY(-12px) scale(0.86) rotate(0deg); opacity: 0.92; filter: none; }
+  .work:not(.is-center) a { pointer-events: none; }        /* a side card's click brings it to the centre */
+
+  .work-photo {
+    position: relative; aspect-ratio: 16 / 10; overflow: hidden; display: grid; place-items: center;
+    background: linear-gradient(160deg, #26262a, #19191c); border-bottom: 1px solid #2c2c30;
+  }
+  .work-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+  .work.is-center:hover .work-photo img { transform: scale(1.04); }
+  .work-photo-empty {
+    position: absolute; inset: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    border: 1.5px dashed rgba(255, 255, 255, 0.18); border-radius: 12px; color: #8a8a93; font-size: 0.82rem;
+  }
+  .work-photo-empty svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  .work-body { padding: 20px 22px 22px; }
+  .work-tag { margin: 0 0 8px; color: var(--gold); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+  .work-title { margin: 0 0 4px; font: 700 1.85rem/1.1 "Jost", "Futura", system-ui, sans-serif; color: #f6efe2; }
+  .work-meta { margin: 0 0 12px; color: #f0a585; font-size: 0.88rem; font-weight: 500; }
+  .work-desc { margin: 0 0 18px; color: #d6d2ca; font-size: 0.95rem; line-height: 1.6; }
+  .work-cta {
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; text-decoration: none;
+    background: linear-gradient(180deg, #f1b53a, var(--gold)); color: #17130a; font-weight: 600; font-size: 0.9rem;
+    box-shadow: 0 0 22px rgba(241, 181, 58, 0.25); transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .work-cta:hover, .work-cta:focus-visible { transform: translateY(-2px); box-shadow: 0 0 30px rgba(241, 181, 58, 0.45); }
+  .work-label {
+    position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(6px);
+    padding: 5px 13px; border-radius: 999px; background: #f6efe2; color: #111; font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .work:not(.is-center):hover .work-label { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .works-nav { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 26px; }
+  .works-arrow {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid #3c3c3c; background: #1c1c1c; color: #f6efe2;
+    font-size: 1.1rem; cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  }
+  .works-arrow:hover, .works-arrow:focus-visible { border-color: #f0a585; background: #242426; transform: translateY(-2px); outline: none; }
+  .works-dots { display: flex; gap: 8px; }
+  .works-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; background: #4a4a50; cursor: pointer; transition: width 0.3s ease, background 0.3s ease; }
+  .works-dot.is-on { width: 26px; background: #f0a585; }
+
+  @media (max-width: 720px) {
+    .works { padding-top: 40px; }
+    .works-head { flex-direction: column; align-items: flex-start; }
+    .works-heading { font-size: 2rem; }
+    .work { width: 82vw; }
+    .work.is-left  { transform: translateX(-90%) scale(0.8) rotate(-5deg); }
+    .work.is-right { transform: translateX(90%)  scale(0.8) rotate(5deg); }
+    .works-deco img { opacity: 0.2; }
+  }
+  @media (prefers-reduced-motion: reduce) { .work, .work-photo img, .works-dot { transition: none; } }
+
+  /* ---------- Projects page: one screen, vertical cards, contact card at the bottom ---------- */
+  body.page-projects { display: flex; flex-direction: column; min-height: 100vh; }
+  .page-projects .works { flex: 1 0 auto; padding: 26px 0 6px; }     /* takes the spare height, pushing the contact card down */
+  .page-projects .works-head { margin-bottom: 12px; }
+  .page-projects .works-heading { font-size: 2.1rem; }
+  .page-projects .works-stage { padding: 8px 0 10px; }
+  .page-projects .works-nav { margin-top: 12px; }
+  .page-projects .work { width: min(360px, 80vw); }
+  .page-projects .work-photo { aspect-ratio: auto; height: clamp(76px, calc(100vh - 632px), 210px); }   /* photo shrinks on short screens */
+  .page-projects .work-body { padding: 16px 18px 18px; }
+  .page-projects .work-tag { margin-bottom: 6px; }
+  .page-projects .work-title { font-size: 1.5rem; }
+  .page-projects .work-meta { margin-bottom: 8px; font-size: 0.82rem; }
+  .page-projects .work-desc {
+    font-size: 0.88rem; line-height: 1.5; margin-bottom: 14px;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .page-projects .work-cta { padding: 8px 14px; font-size: 0.86rem; }
+  .page-projects .contact-card--inline { margin: 10px auto 0; }
+  .page-projects footer { padding: 10px 0 12px; }
+  @media (max-height: 760px) {
+    .page-projects .works { padding-top: 14px; }
+    .page-projects .works-head { margin-bottom: 8px; }
+    .page-projects .works-heading { font-size: 1.8rem; }
+  }
+
   /* placeholders still to fill in: easy to spot so they don't go live by accident */
   .todo { background: #fff1c2; color: #7a5200; border-radius: 4px; padding: 0 4px; font-weight: 600; }
 
