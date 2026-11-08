@@ -337,6 +337,7 @@
   function onScroll() {
     var y = window.scrollY;
     if (animating || jumping) { return; }
+    if (toIndex && !userMoved) { lastY = y; return; }   /* opened at a section: no snapping until the visitor scrolls */
     var dir = y > lastY ? 1 : -1;
     lastY = y;
     var vh = window.innerHeight;
