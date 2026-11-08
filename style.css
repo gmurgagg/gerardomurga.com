@@ -1434,3 +1434,14 @@
   /* laptops: About starts exactly where the first scroll lands, so a jump to #about (top links, Back)
      stops there instead of 84px short of it, inside the intro, where the snap pulled it back to the top */
   @media (min-width: 721px) { .home #about { scroll-margin-top: 0; } }
+
+  /* write-up pages: a row of buttons (main action in gold, the rest outlined) */
+  .doc .doc-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 26px; }
+  .doc .doc-actions a { text-decoration: none; }
+  .doc .doc-link-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 999px;
+    border: 1px solid #4a4a50; background: #232326; color: #ece8e1; font-weight: 600; font-size: 0.9rem;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .doc .doc-link-btn:hover { border-color: #f0a585; background: #2b2b2f; }
+  .doc .doc-actions .work-cta { color: #17130a; }

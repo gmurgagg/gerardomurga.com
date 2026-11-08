@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>When does microlending become a debt trap? — Gerardo Murga</title>
-<meta name="description" content="An interactive tool for exploring how interest rate, term and income volatility interact to make repayment possible or impossible.">
+<meta name="description" content="An interactive probability model, built for Stanford CS109, of how microlending interest rates can push borrowers into a cycle of debt.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css?v=44">
+<link rel="stylesheet" href="../style.css?v=45">
 <script>document.documentElement.classList.add("has-js");</script>
 </head>
 <body class="doc-dark">
@@ -52,17 +52,53 @@
   <div class="wrap">
     <p class="page-kicker">Projects</p>
     <h1 class="page-title">When does microlending become a debt trap?</h1>
-    <p class="page-lede">An interactive tool for exploring how interest rate, term and income volatility interact to make repayment possible or impossible.</p>
+    <p class="page-lede">An interactive model of how interest rates can push microlending borrowers into a cycle of debt.</p>
   </div>
 </header>
 
 <div class="wrap">
 
-  <!-- write-up card, same format as the NFL write-up -->
+  <!-- the write-up reads as one plain document on a dark page, like the NFL write-up -->
+  <!-- the interactive model write-up, same format as the NFL write-up -->
   <article class="doc doc-card">
     <section class="doc-part">
-    <p class="eyebrow">Write-up</p>
-    <p>Write-up in progress. The tool itself and the reasoning behind its assumptions will live here.</p>
+    <p class="eyebrow">Summary</p>
+    <p>For <strong>CS109</strong>, Stanford&rsquo;s probability course for computer scientists, I built an <strong>interactive educational toy model</strong> that shows how <strong>high or low interest rates affect financially vulnerable borrowers</strong>, so that students and citizens can understand what microlending is and how damaging high rates can be.</p>
+    <p>For the full argument on why Latin American microlenders charge such high rates, and what could change that, see my paper on the <a href="papers.html">research papers page</a>.</p>
+    <p class="doc-actions">
+      <a class="work-cta" href="https://microlending-rates-cs109.streamlit.app/" target="_blank" rel="noopener">Open the site <span aria-hidden="true">&#8599;</span></a>
+      <a class="doc-link-btn" href="https://youtu.be/-boLdoQEGDY" target="_blank" rel="noopener">Video walkthrough <span aria-hidden="true">&#8599;</span></a>
+      <a class="doc-link-btn" href="../assets/projects/ImpactOfMicrolendingInterestRates.pdf" target="_blank" rel="noopener">Project write-up (PDF) <span aria-hidden="true">&#8599;</span></a>
+    </p>
+    </section>
+
+    <hr class="doc-divider">
+
+    <section class="doc-part">
+    <p class="eyebrow">Extended</p>
+
+    <h3>Why I built it</h3>
+    <p>I come from a very large, tight-knit family in Mexico, where we can lend each other small amounts at <strong>0% interest</strong> instead of going to a bank. That is a privilege. Many people without that network, and without access to traditional credit, end up with <strong>informal moneylenders or microlenders that charge very high rates</strong>. Microlending and its consequences are still poorly understood, especially in the developed countries that build and export these financial models.</p>
+
+    <h3>How the model works</h3>
+    <p>The app simulates the <strong>alternative credit scoring</strong> many microlenders use instead of a FICO score, since their customers often run informal businesses with little reliable financial data. The user&rsquo;s credit score is a <strong>weighted linear combination</strong> of three parts, plus a bonus for savings:</p>
+    <ul>
+      <li><strong>Friends network (33%)</strong>: the average credit score of the user&rsquo;s friends, each weighted by the probability that they really are friends.</li>
+      <li><strong>Payment history (33%)</strong>: a rolling average of the last 10 payments.</li>
+      <li><strong>Amount owed (33%)</strong>: a score based on how much the user still owes.</li>
+    </ul>
+    <p>The heart of the model is the <strong>probability of friendship</strong>. I drew a <strong>directed graph, in the style of a Bayes net</strong>, of how the variables depend on each other: the user&rsquo;s sport, liking dinosaurs, hours spent on screen, texts with clients and number of successful businesses. Liking dinosaurs depends on the sport through a small conditional probability table. The friendship probability itself is a <strong>clipped linear additive model</strong>: it starts from a prior of 0.5, adds a contribution for each shared trait, and is cut to stay between 0 and 1.</p>
+    <p>Counts such as texts with clients and number of businesses are modeled as <strong>Gaussian random variables</strong>, since by the <strong>Central Limit Theorem</strong> they add up many small, independent behaviors. A higher credit score leads to a <strong>larger loan</strong> and a higher expected profit, which creates a <strong>positive feedback loop</strong>.</p>
+    <p>The result: <strong>raising the interest rate makes it more likely that the user falls into a cycle of debt they cannot escape</strong>.</p>
+    <p>Using social networks to assess credit was inspired by the paper <a href="https://arxiv.org/pdf/2001.10994" target="_blank" rel="noopener">&ldquo;Credit Scoring for Good&rdquo;</a> by Óskarsdóttir et al., and by past conversations with Stanford development economist <strong>Dr. Arun Chandrasekhar</strong>.</p>
+
+    <h3>How I built it</h3>
+    <ul>
+      <li><strong>Designed the model</strong>: the Bayes-net-style graph for friendship, plus the rules and weights for every variable, payment history and amount owed. This was the most creative part, and the one that drew most on CS109 and my economics training.</li>
+      <li><strong>Coded it in pure Python</strong> first, to fully control and understand it (<a href="https://colab.research.google.com/drive/1cmEPo6qXZqUdyjJt6ehh4yAOnhDbPC9Z?usp=sharing" target="_blank" rel="noopener">Python version in Google Colab</a>).</li>
+      <li><strong>Drew the main character, Chill Guy</strong>, by hand in ibisPaint X.</li>
+      <li><strong>Turned it into a web app</strong> with Streamlit, using Claude to convert the Python game into an interactive app with visuals (<a href="https://colab.research.google.com/drive/1f0J2PlttfTdfvdFEGpV5UA1Md2zqIUBF?usp=sharing" target="_blank" rel="noopener">app code in Google Colab</a>).</li>
+    </ul>
     </section>
   </article>
 
